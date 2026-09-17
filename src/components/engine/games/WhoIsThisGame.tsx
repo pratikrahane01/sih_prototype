@@ -12,6 +12,7 @@ import { SpeechSynthesisService } from '../../../services/accessibility/SpeechSy
 import { generateWhoIsThisQuestions, type PersonQuestion } from '../../../services/demo/PersonalizedQuestionService';
 import { DEMO_PATIENT_ID } from '../../../services/demo/DemoMemoryData';
 import { Volume2, Users, CheckCircle, XCircle } from 'lucide-react';
+import { useLanguage } from '../../../contexts/LanguageContext';
 
 // ── Game label letter helper ────────────────────────────────────────────────────
 const LABELS = ['A', 'B', 'C', 'D'];
@@ -42,6 +43,7 @@ export const WhoIsThisGame: React.FC<Props> = ({ difficulty, onComplete }) => {
   // ── Score accumulator refs so setTimeout callbacks see latest values ─────────
   const scoreRef    = useRef(0);
   const mistakesRef = useRef(0);
+  const { t } = useLanguage();
 
   useEffect(() => {
     const patientId = PatientService.getProfile()?.id || DEMO_PATIENT_ID;
@@ -58,7 +60,12 @@ export const WhoIsThisGame: React.FC<Props> = ({ difficulty, onComplete }) => {
 
   // ── Handlers ───────────────────────────────────────────────────────────────
   const speakQuestion = () => {
-    SpeechSynthesisService.speak(currentQ?.questionText ?? "Who is this person?");
+    // Determine the i18n key based on English text
+    let qKey = "q.who_is_this";
+    if (currentQ?.questionText.includes("relationship")) {
+      qKey = "q.relationship";
+    }
+    SpeechSynthesisService.speak(t(qKey));
   };
 
   const handleAnswer = (selected: string) => {
@@ -73,11 +80,11 @@ export const WhoIsThisGame: React.FC<Props> = ({ difficulty, onComplete }) => {
     if (isCorrect) {
       scoreRef.current += 100;
       setDisplayScore(scoreRef.current);
-      setFeedback({ message: `✓ That's right! This is ${currentQ.person.name}.`, isCorrect: true });
+      setFeedback({ message: t('game.correct') + `! ${currentQ.person.name}.`, isCorrect: true });
     } else {
       mistakesRef.current += 1;
       setFeedback({
-        message: `The correct answer is "${currentQ.correctAnswer}". Keep going!`,
+        message: t('game.try_again'),
         isCorrect: false
       });
     }
@@ -112,7 +119,7 @@ export const WhoIsThisGame: React.FC<Props> = ({ difficulty, onComplete }) => {
     return (
       <div className="flex flex-col items-center justify-center p-12 text-center">
         <div className="w-16 h-16 border-4 border-primary-teal border-t-transparent rounded-full animate-spin mb-4" />
-        <p className="text-xl text-gray-500 font-medium">Preparing your activity...</p>
+        <p className="text-xl text-gray-500 font-medium">{t('common.loading')}</p>
       </div>
     );
   }
@@ -121,8 +128,7 @@ export const WhoIsThisGame: React.FC<Props> = ({ difficulty, onComplete }) => {
     return (
       <div className="flex flex-col items-center justify-center p-12 text-center">
         <Users className="w-16 h-16 text-gray-300 mb-4" />
-        <p className="text-xl text-gray-600 font-medium">No people found.</p>
-        <p className="text-gray-400 mt-2">Ask your caregiver to add familiar people in the dashboard.</p>
+        <p className="text-xl text-gray-600 font-medium">{t('common.no_memories')}</p>
       </div>
     );
   }
@@ -133,7 +139,7 @@ export const WhoIsThisGame: React.FC<Props> = ({ difficulty, onComplete }) => {
       <div className="mb-6">
         <div className="flex justify-between text-sm font-semibold text-gray-400 mb-2">
           <span>Question {currentIndex + 1} of {total}</span>
-          <span className="text-primary-teal font-bold">Score: {displayScore}</span>
+          <span className="text-primary-teal font-bold">{t('game.score')}: {displayScore}</span>
         </div>
         <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
           <div
@@ -146,7 +152,7 @@ export const WhoIsThisGame: React.FC<Props> = ({ difficulty, onComplete }) => {
       {/* Question */}
       <div className="flex items-center justify-center gap-3 mb-8">
         <h3 className="text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
-          {currentQ.questionText}
+          {currentQ.questionText.includes("relationship") ? t('q.relationship') : t('q.who_is_this')}
         </h3>
         <button
           onClick={speakQuestion}
@@ -217,7 +223,7 @@ export const WhoIsThisGame: React.FC<Props> = ({ difficulty, onComplete }) => {
               <span className="shrink-0 w-9 h-9 rounded-full bg-primary-teal/10 text-primary-teal font-black text-lg flex items-center justify-center">
                 {LABELS[i]}
               </span>
-              <span className="text-gray-800">{opt}</span>
+              <span className="text-gray-800">{t(`relationship.${opt.toLowerCase()}`, opt)}</span>
             </button>
           );
         })}

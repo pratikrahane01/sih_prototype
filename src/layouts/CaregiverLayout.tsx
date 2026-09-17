@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { Users, Map, Bell, BarChart2, ArrowLeft, WifiOff, Menu, X, Heart } from 'lucide-react';
+import { Users, Bell, BarChart2, ArrowLeft, WifiOff, Menu, X, Heart, Calendar } from 'lucide-react';
 import { useOfflineStatus } from '../hooks/useOfflineStatus';
 
 const CaregiverLayout: React.FC = () => {
@@ -12,7 +12,8 @@ const CaregiverLayout: React.FC = () => {
     { path: '/caregiver', label: 'Dashboard', icon: BarChart2, exact: true },
     { path: '/caregiver/family', label: 'Family Contacts', icon: Users },
     { path: '/caregiver/memories', label: 'Personal Memories', icon: Heart },
-    { path: '/caregiver/routes', label: 'Familiar Routes', icon: Map },
+    { path: '/caregiver/routine', label: 'Daily Routine', icon: Calendar },
+    { path: '/caregiver/diet', label: 'Diet Preferences', icon: Heart },
     { path: '/caregiver/patients', label: 'Patients', icon: Users },
     { path: '/caregiver/reminders', label: 'Reminders', icon: Bell },
   ];

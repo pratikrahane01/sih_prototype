@@ -12,6 +12,7 @@ import { SpeechSynthesisService } from '../../../services/accessibility/SpeechSy
 import { generateMemoryMomentsQuestions, type MomentQuestion } from '../../../services/demo/PersonalizedQuestionService';
 import { DEMO_PATIENT_ID } from '../../../services/demo/DemoMemoryData';
 import { Volume2, Image as ImageIcon, CheckCircle, XCircle, MapPin, Calendar } from 'lucide-react';
+import { useLanguage } from '../../../contexts/LanguageContext';
 
 const LABELS = ['A', 'B', 'C', 'D'];
 
@@ -43,6 +44,7 @@ export const MemoryMomentsGame: React.FC<Props> = ({ difficulty, onComplete }) =
   const mistakesRef    = useRef(0);
   const studyTimerRef  = useRef<ReturnType<typeof setTimeout> | null>(null);
   const progressTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const { t } = useLanguage();
 
   // Study duration: Easy=8s, Medium=6s, Hard=4s
   const studyMs = difficulty === 1 ? 8000 : difficulty === 2 ? 6000 : 4000;
@@ -87,7 +89,11 @@ export const MemoryMomentsGame: React.FC<Props> = ({ difficulty, onComplete }) =
   const currentQ = questions[currentIndex];
 
   const speakQuestion = () => {
-    SpeechSynthesisService.speak(currentQ?.questionText ?? "Where did this happen?");
+    let qKey = "q.where";
+    if (currentQ?.questionText.includes("When")) {
+      qKey = "q.when";
+    }
+    SpeechSynthesisService.speak(t(qKey));
   };
 
   const handleAnswer = (selected: string) => {
@@ -102,11 +108,11 @@ export const MemoryMomentsGame: React.FC<Props> = ({ difficulty, onComplete }) =
     if (isCorrect) {
       scoreRef.current += 100;
       setDisplayScore(scoreRef.current);
-      setFeedback({ message: "Excellent memory! That's correct.", isCorrect: true });
+      setFeedback({ message: t('game.correct'), isCorrect: true });
     } else {
       mistakesRef.current += 1;
       setFeedback({
-        message: `The answer was "${currentQ.correctAnswer}". Well done for trying!`,
+        message: t('game.try_again'),
         isCorrect: false
       });
     }
@@ -138,7 +144,7 @@ export const MemoryMomentsGame: React.FC<Props> = ({ difficulty, onComplete }) =
     return (
       <div className="flex flex-col items-center justify-center p-12 text-center">
         <div className="w-16 h-16 border-4 border-primary-teal border-t-transparent rounded-full animate-spin mb-4" />
-        <p className="text-xl text-gray-500">Preparing your memories...</p>
+        <p className="text-xl text-gray-500">{t('common.loading')}</p>
       </div>
     );
   }
@@ -147,8 +153,7 @@ export const MemoryMomentsGame: React.FC<Props> = ({ difficulty, onComplete }) =
     return (
       <div className="flex flex-col items-center justify-center p-12 text-center">
         <ImageIcon className="w-16 h-16 text-gray-300 mb-4" />
-        <p className="text-xl text-gray-600 font-medium">No memories found.</p>
-        <p className="text-gray-400 mt-2">Ask your caregiver to add memories in the dashboard.</p>
+        <p className="text-xl text-gray-600 font-medium">{t('common.no_memories')}</p>
       </div>
     );
   }
@@ -160,8 +165,8 @@ export const MemoryMomentsGame: React.FC<Props> = ({ difficulty, onComplete }) =
       {/* Progress Bar */}
       <div className="mb-6">
         <div className="flex justify-between text-sm font-semibold text-gray-400 mb-2">
-          <span>Memory {currentIndex + 1} of {total}</span>
-          <span className="text-primary-teal font-bold">Score: {displayScore}</span>
+          <span>Question {currentIndex + 1} of {total}</span>
+          <span className="text-primary-teal font-bold">{t('game.score')}: {displayScore}</span>
         </div>
         <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
           <div
@@ -174,8 +179,8 @@ export const MemoryMomentsGame: React.FC<Props> = ({ difficulty, onComplete }) =
       {/* ── STUDY PHASE ── */}
       {phase === 'study' && (
         <div className="animate-fade-in">
-          <h3 className="text-3xl font-bold text-gray-800 mb-1">Look at this memory</h3>
-          <p className="text-lg text-gray-400 mb-6">Remember where and when this happened.</p>
+          <h3 className="text-3xl font-bold text-gray-800 mb-1">{t('game.look_at_memory')}</h3>
+          <p className="text-lg text-gray-400 mb-6">{t('game.remember_details')}</p>
 
           <div className="bg-white rounded-3xl shadow-md border border-gray-100 p-6 flex flex-col items-center">
             {/* Memory Image — fallback icon below, real photo on top */}
@@ -227,7 +232,7 @@ export const MemoryMomentsGame: React.FC<Props> = ({ difficulty, onComplete }) =
             />
           </div>
           <p className="text-sm text-gray-400 mt-2 font-medium">
-            The question will appear shortly...
+            {t('game.question_shortly')}
           </p>
         </div>
       )}
@@ -238,7 +243,7 @@ export const MemoryMomentsGame: React.FC<Props> = ({ difficulty, onComplete }) =
           {/* Question + Speaker */}
           <div className="flex items-center justify-center gap-3 mb-5">
             <h3 className="text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
-              {currentQ.questionText}
+              {currentQ.questionText.includes("When") ? t('q.when') : t('q.where')}
             </h3>
             <button
               onClick={speakQuestion}

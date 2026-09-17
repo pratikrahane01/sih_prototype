@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { MapPin, Navigation, Map } from 'lucide-react';
+import { useLanguage } from '../../../contexts/LanguageContext';
 
 interface Props {
   difficulty: number;
@@ -9,6 +10,7 @@ interface Props {
 export const SpatialGame: React.FC<Props> = ({ difficulty, onComplete }) => {
   const [startTime, setStartTime] = useState<number>(0);
   const [mistakes, setMistakes] = useState(0);
+  const { t } = useLanguage();
 
   useEffect(() => {
     setStartTime(Date.now());
@@ -61,19 +63,19 @@ export const SpatialGame: React.FC<Props> = ({ difficulty, onComplete }) => {
       <div className="grid grid-cols-2 gap-4 w-full max-w-sm">
         <button onClick={() => handleSelect(false)} className="py-6 text-2xl font-medium bg-gray-50 rounded-2xl border-4 border-transparent hover:border-gray-200 flex flex-col items-center gap-2">
           <Navigation className="w-8 h-8 transform -rotate-45" />
-          Top Left
+          {t('game.top_left')}
         </button>
         <button onClick={() => handleSelect(true)} className="py-6 text-2xl font-medium bg-gray-50 rounded-2xl border-4 border-transparent hover:border-primary-teal transition-all flex flex-col items-center gap-2">
           <Navigation className="w-8 h-8 transform rotate-45" />
-          Top Right
+          {t('game.top_right')}
         </button>
         <button onClick={() => handleSelect(false)} className="py-6 text-2xl font-medium bg-gray-50 rounded-2xl border-4 border-transparent hover:border-gray-200 flex flex-col items-center gap-2">
           <Navigation className="w-8 h-8 transform -rotate-135" />
-          Bottom Left
+          {t('game.bottom_left')}
         </button>
         <button onClick={() => handleSelect(false)} className="py-6 text-2xl font-medium bg-gray-50 rounded-2xl border-4 border-transparent hover:border-gray-200 flex flex-col items-center gap-2">
           <Navigation className="w-8 h-8 transform rotate-135" />
-          Bottom Right
+          {t('game.bottom_right')}
         </button>
       </div>
     </div>

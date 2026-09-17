@@ -3,21 +3,19 @@ import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { Home, Brain, LogOut, WifiOff, Bell, Calendar, TrendingUp } from 'lucide-react';
 import { PatientService } from '../services/api/PatientService';
 import { useOfflineStatus } from '../hooks/useOfflineStatus';
-import { LanguageService } from '../services/accessibility/LanguageService';
 import type { SupportedLanguageCode } from '../types';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const PatientLayout: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { isOffline } = useOfflineStatus();
   const profile = PatientService.getProfile();
-  const [currentLang, setCurrentLang] = React.useState<SupportedLanguageCode>(LanguageService.getCurrentLanguageCode());
+  const { language, setLanguage, t } = useLanguage();
 
   const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newLang = e.target.value as SupportedLanguageCode;
-    LanguageService.setLanguage(newLang);
-    setCurrentLang(newLang);
-    window.location.reload(); // Quick refresh for demo purposes to re-render strings
+    setLanguage(newLang);
   };
 
   // If no profile and not in onboarding, prompt setup
@@ -43,10 +41,10 @@ const PatientLayout: React.FC = () => {
   }
 
   const navItems = [
-    { path: '/patient', label: 'Home', icon: Home },
-    { path: '/patient/games', label: 'Activities', icon: Brain },
-    { path: '/patient/routes', label: 'Routine', icon: Calendar },
-    { path: '/patient/assistant', label: 'Insights', icon: TrendingUp },
+    { path: '/patient', label: t('nav.home'), icon: Home },
+    { path: '/patient/games', label: t('nav.activities'), icon: Brain },
+    { path: '/patient/routine', label: t('nav.routine'), icon: Calendar },
+    { path: '/patient/insights', label: t('nav.insights'), icon: TrendingUp },
   ];
 
   return (
@@ -70,7 +68,7 @@ const PatientLayout: React.FC = () => {
           {/* RIGHT */}
           <div className="flex items-center gap-2 md:gap-4">
             <select 
-              value={currentLang} 
+              value={language} 
               onChange={handleLanguageChange}
               className="bg-white/20 text-white border border-white/30 rounded-lg px-2 py-1 text-sm outline-none cursor-pointer hidden sm:block"
             >
@@ -82,7 +80,7 @@ const PatientLayout: React.FC = () => {
             {isOffline && (
               <div className="flex items-center gap-1 bg-white/20 text-white px-3 py-1.5 rounded-full text-sm font-medium">
                 <WifiOff className="w-4 h-4" />
-                <span className="hidden sm:inline">Offline</span>
+                <span className="hidden sm:inline">{t('common.offline')}</span>
               </div>
             )}
             
@@ -93,10 +91,10 @@ const PatientLayout: React.FC = () => {
             <Link 
               to="/" 
               className="flex items-center space-x-2 text-white/90 hover:text-white hover:bg-white/10 p-3 rounded-full md:rounded-xl transition-colors"
-              aria-label="Exit"
+              aria-label={t('common.exit')}
             >
               <LogOut className="w-6 h-6" />
-              <span className="text-lg font-medium hidden md:inline">Exit</span>
+              <span className="text-lg font-medium hidden md:inline">{t('common.exit')}</span>
             </Link>
           </div>
         </div>

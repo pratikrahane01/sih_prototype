@@ -12,6 +12,7 @@ import { SpeechSynthesisService } from '../../../services/accessibility/SpeechSy
 import { generateLifeStoryQuestions, type LifeStoryQuestion } from '../../../services/demo/PersonalizedQuestionService';
 import { DEMO_PATIENT_ID } from '../../../services/demo/DemoMemoryData';
 import { Volume2, Calendar, CheckCircle, XCircle } from 'lucide-react';
+import { useLanguage } from '../../../contexts/LanguageContext';
 
 interface Props {
   difficulty: number;
@@ -37,6 +38,7 @@ export const LifeStoryGame: React.FC<Props> = ({ difficulty, onComplete }) => {
   const startTimeRef = useRef(Date.now());
   const scoreRef     = useRef(0);
   const mistakesRef  = useRef(0);
+  const { t } = useLanguage();
 
   useEffect(() => {
     const patientId = PatientService.getProfile()?.id || DEMO_PATIENT_ID;
@@ -50,7 +52,7 @@ export const LifeStoryGame: React.FC<Props> = ({ difficulty, onComplete }) => {
   const currentQ = questions[currentIndex];
 
   const speakQuestion = () => {
-    SpeechSynthesisService.speak(currentQ?.questionText ?? "Which of these happened first?");
+    SpeechSynthesisService.speak(t('q.which_first'));
   };
 
   const handleAnswer = (selectedId: string) => {
@@ -66,13 +68,13 @@ export const LifeStoryGame: React.FC<Props> = ({ difficulty, onComplete }) => {
       scoreRef.current += 100;
       setDisplayScore(scoreRef.current);
       setFeedback({
-        message: `Correct! "${currentQ.correctAnswer.title}" (${currentQ.correctAnswer.year}) came first.`,
+        message: t('game.correct'),
         isCorrect: true
       });
     } else {
       mistakesRef.current += 1;
       setFeedback({
-        message: `"${currentQ.correctAnswer.title}" (${currentQ.correctAnswer.year}) happened first. Good try!`,
+        message: t('game.try_again'),
         isCorrect: false
       });
     }
@@ -104,7 +106,7 @@ export const LifeStoryGame: React.FC<Props> = ({ difficulty, onComplete }) => {
     return (
       <div className="flex flex-col items-center justify-center p-12 text-center">
         <div className="w-16 h-16 border-4 border-primary-teal border-t-transparent rounded-full animate-spin mb-4" />
-        <p className="text-xl text-gray-500">Preparing your life story...</p>
+        <p className="text-xl text-gray-500">{t('common.loading')}</p>
       </div>
     );
   }
@@ -113,8 +115,7 @@ export const LifeStoryGame: React.FC<Props> = ({ difficulty, onComplete }) => {
     return (
       <div className="flex flex-col items-center justify-center p-12 text-center">
         <Calendar className="w-16 h-16 text-gray-300 mb-4" />
-        <p className="text-xl text-gray-600 font-medium">Not enough memories to build a timeline.</p>
-        <p className="text-gray-400 mt-2">Ask your caregiver to add more memories with dates.</p>
+        <p className="text-xl text-gray-600 font-medium">{t('common.no_memories')}</p>
       </div>
     );
   }
@@ -127,7 +128,7 @@ export const LifeStoryGame: React.FC<Props> = ({ difficulty, onComplete }) => {
       <div className="mb-6">
         <div className="flex justify-between text-sm font-semibold text-gray-400 mb-2">
           <span>Question {currentIndex + 1} of {total}</span>
-          <span className="text-primary-teal font-bold">Score: {displayScore}</span>
+          <span className="text-primary-teal font-bold">{t('game.score')}: {displayScore}</span>
         </div>
         <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
           <div
@@ -140,7 +141,7 @@ export const LifeStoryGame: React.FC<Props> = ({ difficulty, onComplete }) => {
       {/* Question */}
       <div className="flex items-center justify-center gap-3 mb-3">
         <h3 className="text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
-          {currentQ.questionText}
+          {t('q.which_first')}
         </h3>
         <button
           onClick={speakQuestion}
@@ -150,7 +151,7 @@ export const LifeStoryGame: React.FC<Props> = ({ difficulty, onComplete }) => {
           <Volume2 className="w-6 h-6" />
         </button>
       </div>
-      <p className="text-gray-400 text-base mb-8">Tap the memory that happened earliest.</p>
+      <p className="text-gray-400 text-base mb-8">{t('game.tap_earliest')}</p>
 
       {/* Feedback */}
       {feedback && (

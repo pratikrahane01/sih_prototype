@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import type { GameDefinition, GameSession, GameAttempt } from '../../types';
 import { PatientService } from '../../services/api/PatientService';
 import { TelemetryService } from '../../services/telemetry/TelemetryService';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 // Dynamic game component imports
 import { MemoryGame } from './games/MemoryGame';
@@ -25,6 +26,7 @@ export const GameEngine: React.FC<Props> = ({ game, difficulty }) => {
   const navigate = useNavigate();
   const [session, setSession] = useState<GameSession | null>(null);
   const [isCompleted, setIsCompleted] = useState(false);
+  const { t } = useLanguage();
 
   useEffect(() => {
     // Initialize session when game starts
@@ -94,7 +96,7 @@ export const GameEngine: React.FC<Props> = ({ game, difficulty }) => {
   };
 
   if (!session) {
-    return <div className="p-8 text-center text-xl text-text-charcoal/60">Loading activity...</div>;
+    return <div className="p-8 text-center text-xl text-text-charcoal/60">{t('common.loading')}</div>;
   }
 
   if (isCompleted) {
@@ -122,11 +124,14 @@ export const GameEngine: React.FC<Props> = ({ game, difficulty }) => {
     }
   };
 
+  const translatedName = t(game.titleKey, game.name);
+  const displayInst = t(game.instructionsKey, game.instructions);
+
   return (
     <div className="w-full flex flex-col items-center max-w-4xl mx-auto">
       <div className="mb-8 text-center">
-        <h2 className="text-3xl font-bold text-primary-teal mb-2">{game.name}</h2>
-        <p className="text-xl text-text-charcoal/80">{game.instructions}</p>
+        <h2 className="text-3xl font-bold text-primary-teal mb-2">{translatedName}</h2>
+        <p className="text-xl text-text-charcoal/80">{displayInst}</p>
       </div>
       
       <div className="w-full bg-white p-8 rounded-3xl shadow-sm border border-gray-100 min-h-[400px] flex flex-col items-center justify-center">

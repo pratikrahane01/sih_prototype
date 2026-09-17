@@ -8,7 +8,6 @@
  *   1. audioUrl from MemoryService (if caregiver uploaded a real file)
  *   2. A graceful "Demo Mode" UI that still lets the patient answer
  *
- * Data source: PersonalizedQuestionService → MemoryService (with demo fallback)
  */
 import React, { useState, useEffect, useRef } from 'react';
 import { PatientService } from '../../../services/api/PatientService';
@@ -16,6 +15,7 @@ import { SpeechSynthesisService } from '../../../services/accessibility/SpeechSy
 import { generateFavoriteSongQuestions, type SongQuestion } from '../../../services/demo/PersonalizedQuestionService';
 import { DEMO_PATIENT_ID } from '../../../services/demo/DemoMemoryData';
 import { Volume2, Play, Pause, RotateCcw, Music, CheckCircle, XCircle } from 'lucide-react';
+import { useLanguage } from '../../../contexts/LanguageContext';
 
 const LABELS = ['A', 'B', 'C', 'D'];
 
@@ -45,6 +45,7 @@ export const FavoriteSongGame: React.FC<Props> = ({ difficulty, onComplete }) =>
   const scoreRef     = useRef(0);
   const mistakesRef  = useRef(0);
   const audioRef     = useRef<HTMLAudioElement | null>(null);
+  const { t } = useLanguage();
 
   useEffect(() => {
     const patientId = PatientService.getProfile()?.id || DEMO_PATIENT_ID;
@@ -87,7 +88,7 @@ export const FavoriteSongGame: React.FC<Props> = ({ difficulty, onComplete }) =>
   };
 
   const speakQuestion = () => {
-    SpeechSynthesisService.speak("Do you recognise this song? Choose from the options below.");
+    SpeechSynthesisService.speak(t('q.recognize_song'));
   };
 
   const handleAnswer = (selected: string) => {
@@ -109,13 +110,13 @@ export const FavoriteSongGame: React.FC<Props> = ({ difficulty, onComplete }) =>
       scoreRef.current += 100;
       setDisplayScore(scoreRef.current);
       setFeedback({
-        message: `🎵 Correct! That beautiful song is "${currentQ.song.title}".`,
+        message: t('game.correct'),
         isCorrect: true
       });
     } else {
       mistakesRef.current += 1;
       setFeedback({
-        message: `The song was "${currentQ.correctAnswer}". A wonderful memory!`,
+        message: t('game.try_again'),
         isCorrect: false
       });
     }
@@ -147,7 +148,7 @@ export const FavoriteSongGame: React.FC<Props> = ({ difficulty, onComplete }) =>
     return (
       <div className="flex flex-col items-center justify-center p-12 text-center">
         <div className="w-16 h-16 border-4 border-primary-teal border-t-transparent rounded-full animate-spin mb-4" />
-        <p className="text-xl text-gray-500">Loading your favourite music...</p>
+        <p className="text-xl text-gray-500">{t('common.loading')}</p>
       </div>
     );
   }
@@ -156,8 +157,7 @@ export const FavoriteSongGame: React.FC<Props> = ({ difficulty, onComplete }) =>
     return (
       <div className="flex flex-col items-center justify-center p-12 text-center">
         <Music className="w-16 h-16 text-gray-300 mb-4" />
-        <p className="text-xl text-gray-600 font-medium">No songs found.</p>
-        <p className="text-gray-400 mt-2">Ask your caregiver to add favourite songs in the dashboard.</p>
+        <p className="text-xl text-gray-600 font-medium">{t('common.no_memories')}</p>
       </div>
     );
   }
@@ -182,8 +182,8 @@ export const FavoriteSongGame: React.FC<Props> = ({ difficulty, onComplete }) =>
       {/* Progress */}
       <div className="mb-6">
         <div className="flex justify-between text-sm font-semibold text-gray-400 mb-2">
-          <span>Song {currentIndex + 1} of {total}</span>
-          <span className="text-primary-teal font-bold">Score: {displayScore}</span>
+          <span>Question {currentIndex + 1} of {total}</span>
+          <span className="text-primary-teal font-bold">{t('game.score')}: {displayScore}</span>
         </div>
         <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
           <div
@@ -196,7 +196,7 @@ export const FavoriteSongGame: React.FC<Props> = ({ difficulty, onComplete }) =>
       {/* Question */}
       <div className="flex items-center justify-center gap-3 mb-6">
         <h3 className="text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
-          Do you recognise this song?
+          {t('q.recognize_song')}
         </h3>
         <button
           onClick={speakQuestion}
@@ -237,7 +237,7 @@ export const FavoriteSongGame: React.FC<Props> = ({ difficulty, onComplete }) =>
         {/* Demo mode badge */}
         {!hasAudio && (
           <span className="text-xs font-bold text-amber-600 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full mb-4">
-            🎵 Demo — Tap play, then choose the song
+            🎵 {t('game.demo_song')}
           </span>
         )}
 

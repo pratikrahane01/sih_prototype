@@ -44,7 +44,23 @@ export const UI_STRINGS = {
     suggested_q1: "Where are my glasses?",
     suggested_q2: "Who is Priya?",
     suggested_q3: "What is my morning routine?",
-    suggested_q4: "Where is my doctor's clinic?"
+    suggested_q4: "Where is my doctor's clinic?",
+    // New Strings
+    daily_routine: "Daily Routine",
+    todays_routine: "Today's Routine",
+    completed: "Completed",
+    upcoming: "Upcoming",
+    diet_preference: "Diet Preference",
+    food_preferences: "Food Preferences",
+    preferred_foods: "Preferred Foods",
+    foods_to_avoid: "Foods to Avoid",
+    your_insights: "Your Insights",
+    activities_completed: "Activities Completed",
+    average_accuracy: "Average Accuracy",
+    response_time: "Response Time",
+    activity_performance: "Activity Performance",
+    recent_activity: "Recent Activity",
+    not_enough_data: "Not Enough Data"
   },
   hi: {
     mic_idle: "बोलने के लिए माइक्रोफ़ोन पर टैप करें",
@@ -57,7 +73,22 @@ export const UI_STRINGS = {
     suggested_q1: "मेरे चश्मे कहाँ हैं?",
     suggested_q2: "प्रिया कौन हैं?",
     suggested_q3: "मेरी सुबह की दिनचर्या क्या है?",
-    suggested_q4: "मेरे डॉक्टर का क्लिनिक कहाँ है?"
+    suggested_q4: "मेरे डॉक्टर का क्लिनिक कहाँ है?",
+    daily_routine: "दैनिक दिनचर्या",
+    todays_routine: "आज की दिनचर्या",
+    completed: "पूरा हुआ",
+    upcoming: "आगामी",
+    diet_preference: "आहार प्राथमिकता",
+    food_preferences: "भोजन प्राथमिकताएं",
+    preferred_foods: "पसंदीदा भोजन",
+    foods_to_avoid: "परहेज करने वाले भोजन",
+    your_insights: "आपकी अंतर्दृष्टि",
+    activities_completed: "गतिविधियां पूरी हुईं",
+    average_accuracy: "औसत सटीकता",
+    response_time: "प्रतिक्रिया समय",
+    activity_performance: "गतिविधि प्रदर्शन",
+    recent_activity: "हाल की गतिविधि",
+    not_enough_data: "पर्याप्त डेटा नहीं"
   },
   as: {
     mic_idle: "কথা ক'বলৈ মাইক্ৰ'ফোনত টিপক",
@@ -70,7 +101,22 @@ export const UI_STRINGS = {
     suggested_q1: "মোৰ চশমাযোৰ ক'ত আছে?",
     suggested_q2: "প্ৰিয়া কোন?",
     suggested_q3: "মোৰ ৰাতিপুৱাৰ ৰুটিন কি?",
-    suggested_q4: "মোৰ ডাক্তৰৰ ক্লিনিক ক'ত আছে?"
+    suggested_q4: "মোৰ ডাক্তৰৰ ক্লিনিক ক'ত আছে?",
+    daily_routine: "দৈনন্দিন ৰুটিন",
+    todays_routine: "আজিৰ ৰুটিন",
+    completed: "সম্পন্ন",
+    upcoming: "আগন্তুক",
+    diet_preference: "আহাৰৰ পছন্দ",
+    food_preferences: "খাদ্যৰ পছন্দ",
+    preferred_foods: "পছন্দৰ খাদ্য",
+    foods_to_avoid: "পৰিহাৰ কৰিবলগীয়া খাদ্য",
+    your_insights: "আপোনাৰ অন্তৰ্দৃষ্টি",
+    activities_completed: "কাৰ্যকলাপ সম্পন্ন হ'ল",
+    average_accuracy: "গড় সঠিকতা",
+    response_time: "প্ৰতিক্ৰিয়াৰ সময়",
+    activity_performance: "কাৰ্যকলাপৰ প্ৰদৰ্শন",
+    recent_activity: "শেহতীয়া কাৰ্যকলাপ",
+    not_enough_data: "পৰ্যাপ্ত তথ্য নাই"
   },
   mr: {
     mic_idle: "बोलण्यासाठी मायक्रोफोनवर टॅप करा",
@@ -83,7 +129,22 @@ export const UI_STRINGS = {
     suggested_q1: "माझे चष्मे कुठे आहेत?",
     suggested_q2: "प्रिया कोण आहे?",
     suggested_q3: "माझी सकाळची दिनचर्या काय आहे?",
-    suggested_q4: "माझ्या डॉक्टरांचे क्लिनिक कुठे आहे?"
+    suggested_q4: "माझ्या डॉक्टरांचे क्लिनिक कुठे आहे?",
+    daily_routine: "दैनिक दिनचर्या",
+    todays_routine: "आजची दिनचर्या",
+    completed: "पूर्ण झाले",
+    upcoming: "आगामी",
+    diet_preference: "आहार प्राधान्य",
+    food_preferences: "अन्नाची प्राधान्ये",
+    preferred_foods: "आवडते अन्न",
+    foods_to_avoid: "टाळावयाचे अन्न",
+    your_insights: "तुमची अंतर्दृष्टी",
+    activities_completed: "उपक्रम पूर्ण झाले",
+    average_accuracy: "सरासरी अचूकता",
+    response_time: "प्रतिसाद वेळ",
+    activity_performance: "उपक्रम कामगिरी",
+    recent_activity: "अलीकडील क्रियाकलाप",
+    not_enough_data: "पुरेसा डेटा नाही"
   }
 };
 

@@ -32,7 +32,8 @@ class SpeechSynthesisServiceClass {
     // Map to BCP-47 for speech synthesis
     if (currentLangCode === 'en') utterance.lang = 'en-US';
     if (currentLangCode === 'hi') utterance.lang = 'hi-IN';
-    if (currentLangCode === 'as') utterance.lang = 'as-IN'; // Fallback to whatever the browser can do
+    if (currentLangCode === 'as') utterance.lang = 'as-IN';
+    if (currentLangCode === 'mr') utterance.lang = 'mr-IN';
 
     // Adjust for elderly users: slightly slower, clear pitch
     utterance.rate = 0.9;

@@ -18,7 +18,6 @@ export const CaregiverDashboard: React.FC = () => {
   const [recentActivities, setRecentActivities] = useState<GameAttempt[]>([]);
   const [adaptiveData, setAdaptiveData] = useState<any>(null);
   const memoryStatus = CaregiverAnalyticsService.getMemoryAssistantStatus(patientId);
-  const routeStatus = CaregiverAnalyticsService.getFamiliarRoutesStatus(patientId);
 
   useEffect(() => {
     setRecentActivities(CaregiverAnalyticsService.getRecentActivities(patientId, 5));
@@ -252,23 +251,15 @@ export const CaregiverDashboard: React.FC = () => {
             )}
           </Link>
 
-          {/* Familiar Routes Status */}
-          <Link to="/caregiver/routes" className="block bg-white rounded-3xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition group">
+          {/* Diet Preferences Status */}
+          <Link to="/caregiver/diet" className="block bg-white rounded-3xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition group">
             <div className="flex justify-between items-start mb-4">
-              <h3 className="font-bold text-gray-900">Familiar Routes</h3>
+              <h3 className="font-bold text-gray-900">Diet Preferences</h3>
               <ChevronRight className="text-gray-400 group-hover:text-primary-teal" />
             </div>
-            {routeStatus.routesConfigured > 0 ? (
-              <div>
-                <p className="text-3xl font-bold text-primary-teal mb-1">{routeStatus.routesConfigured}</p>
-                <p className="text-sm text-gray-500 mb-4">Routes Configured</p>
-                {routeStatus.lastRouteActivity && (
-                  <p className="text-xs text-gray-500 border-t pt-3 mt-1">Last active: <span className="font-medium text-gray-700">{routeStatus.lastRouteActivity}</span></p>
-                )}
-              </div>
-            ) : (
-              <p className="text-sm text-gray-500">No familiar routes configured.</p>
-            )}
+            <div>
+              <p className="text-sm text-gray-500 mb-4">Manage dietary preferences and meal notes.</p>
+            </div>
           </Link>
 
           {/* Language and Voice Status */}
@@ -442,185 +433,141 @@ export const FamilyManager: React.FC = () => {
   );
 };
 
-import { RouteService } from '../../services/api/RouteService';
-import type { FamiliarRoute, RouteLocation } from '../../types';
+import { RoutineService } from '../../services/api/RoutineService';
+import { DietService } from '../../services/api/DietService';
+import type { RoutineItem, RoutineCategory } from '../../types';
 
-export const RouteManager: React.FC = () => {
-  const [routes, setRoutes] = useState<FamiliarRoute[]>([]);
-  const [routeName, setRouteName] = useState('');
-  const [routeDescription, setRouteDescription] = useState('');
-  const [locations, setLocations] = useState<{name: string, description: string, landmark: string, direction: string}[]>([
-    { name: '', description: '', landmark: '', direction: '' }
-  ]);
+export const RoutineManager: React.FC = () => {
+  const [routines, setRoutines] = useState<RoutineItem[]>([]);
   const patientId = PatientService.getProfile()?.id || 'demo-patient';
+  
+  const [title, setTitle] = useState('');
+  const [time, setTime] = useState('');
+  const [category, setCategory] = useState<RoutineCategory>('Activity');
+  const [description, setDescription] = useState('');
+  const [reminder, setReminder] = useState(false);
 
   useEffect(() => {
-    setRoutes(RouteService.getPatientRoutes(patientId));
+    setRoutines(RoutineService.getPatientRoutine(patientId));
   }, [patientId]);
 
-  const handleAddLocation = () => {
-    setLocations([...locations, { name: '', description: '', landmark: '', direction: '' }]);
-  };
-
-  const handleLocationChange = (index: number, field: keyof typeof locations[0], value: string) => {
-    const newLocations = [...locations];
-    newLocations[index][field] = value;
-    setLocations(newLocations);
-  };
-
-  const handleRemoveLocation = (index: number) => {
-    if (locations.length <= 1) return;
-    const newLocations = [...locations];
-    newLocations.splice(index, 1);
-    setLocations(newLocations);
-  };
-
-  const handleSaveRoute = (e: React.FormEvent) => {
+  const handleSaveRoutine = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!routeName || locations.some(l => !l.name)) return;
+    if (!title || !time) return;
 
-    const mappedLocations: RouteLocation[] = locations.map((l, index) => ({
-      id: crypto.randomUUID(),
-      name: l.name,
-      description: l.description,
-      landmark: l.landmark,
-      direction: l.direction,
-      order: index
-    }));
-
-    RouteService.createRoute({
+    RoutineService.addRoutineItem({
       patientId,
-      name: routeName,
-      description: routeDescription,
-      locations: mappedLocations
+      title,
+      time,
+      category,
+      description,
+      reminderEnabled: reminder,
+      completed: false
     });
 
-    setRouteName('');
-    setRouteDescription('');
-    setLocations([{ name: '', description: '', landmark: '', direction: '' }]);
-    setRoutes(RouteService.getPatientRoutes(patientId));
+    setTitle('');
+    setTime('');
+    setDescription('');
+    setReminder(false);
+    setRoutines(RoutineService.getPatientRoutine(patientId));
   };
 
   const handleDelete = (id: string) => {
-    RouteService.deleteRoute(id);
-    setRoutes(RouteService.getPatientRoutes(patientId));
+    RoutineService.deleteRoutineItem(patientId, id);
+    setRoutines(RoutineService.getPatientRoutine(patientId));
   };
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Familiar Routes</h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">Daily Routine</h1>
       
       <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm mb-8">
-        <h2 className="text-xl font-semibold mb-4 text-primary-teal">Create New Route</h2>
-        <form onSubmit={handleSaveRoute} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <h2 className="text-xl font-semibold mb-4 text-primary-teal">Add Routine Activity</h2>
+        <form onSubmit={handleSaveRoutine} className="space-y-4 max-w-lg">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Activity Name</label>
+            <input 
+              type="text" 
+              value={title}
+              onChange={e => setTitle(e.target.value)}
+              placeholder="e.g., Morning Walk"
+              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-primary-teal"
+              required
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Route Name</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Time</label>
               <input 
-                type="text" 
-                value={routeName}
-                onChange={e => setRouteName(e.target.value)}
-                placeholder="e.g., Home to Market"
-                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-primary-teal focus:border-primary-teal"
+                type="time" 
+                value={time}
+                onChange={e => setTime(e.target.value)}
+                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-primary-teal"
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-              <input 
-                type="text" 
-                value={routeDescription}
-                onChange={e => setRouteDescription(e.target.value)}
-                placeholder="e.g., My usual route to the main market"
-                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-primary-teal focus:border-primary-teal"
-              />
+              <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+              <select 
+                value={category}
+                onChange={e => setCategory(e.target.value as RoutineCategory)}
+                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-primary-teal"
+              >
+                <option value="Morning">Morning</option>
+                <option value="Meals">Meals</option>
+                <option value="Medicine">Medicine</option>
+                <option value="Activity">Activity</option>
+                <option value="Rest">Rest</option>
+                <option value="Family">Family</option>
+                <option value="Evening">Evening</option>
+              </select>
             </div>
           </div>
-
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium text-gray-900 border-b pb-2">Locations Sequence</h3>
-            {locations.map((loc, idx) => (
-              <div key={idx} className="p-4 bg-gray-50 rounded-lg border border-gray-200 relative">
-                <div className="absolute top-2 right-2 text-xs font-bold bg-gray-200 text-gray-600 px-2 py-1 rounded">
-                  Stop {idx + 1}
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Location Name *</label>
-                    <input 
-                      type="text" 
-                      value={loc.name}
-                      onChange={e => handleLocationChange(idx, 'name', e.target.value)}
-                      placeholder="e.g., Home, Bus Stop"
-                      className="w-full p-2 border border-gray-300 rounded-lg text-sm"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Landmark (Optional)</label>
-                    <input 
-                      type="text" 
-                      value={loc.landmark}
-                      onChange={e => handleLocationChange(idx, 'landmark', e.target.value)}
-                      placeholder="e.g., Blue shelter"
-                      className="w-full p-2 border border-gray-300 rounded-lg text-sm"
-                    />
-                  </div>
-                </div>
-                {locations.length > 1 && (
-                  <button 
-                    type="button" 
-                    onClick={() => handleRemoveLocation(idx)}
-                    className="mt-3 text-red-500 text-sm hover:underline"
-                  >
-                    Remove Stop
-                  </button>
-                )}
-              </div>
-            ))}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Description (Optional)</label>
+            <input 
+              type="text" 
+              value={description}
+              onChange={e => setDescription(e.target.value)}
+              placeholder="e.g., Take a walk in the garden"
+              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-primary-teal"
+            />
           </div>
-
-          <div className="flex gap-4">
-            <button 
-              type="button" 
-              onClick={handleAddLocation}
-              className="bg-gray-100 text-gray-700 px-6 py-2 rounded-lg font-medium hover:bg-gray-200 transition"
-            >
-              + Add Another Stop
-            </button>
-            <button 
-              type="submit" 
-              className="bg-primary-teal text-white px-6 py-2 rounded-lg font-medium hover:bg-teal-700 transition"
-            >
-              Save Route
-            </button>
+          <div className="flex items-center">
+            <input 
+              type="checkbox" 
+              id="reminder"
+              checked={reminder}
+              onChange={e => setReminder(e.target.checked)}
+              className="mr-2"
+            />
+            <label htmlFor="reminder" className="text-sm text-gray-700">Enable voice reminder for this activity</label>
           </div>
+          <button 
+            type="submit" 
+            className="bg-primary-teal text-white px-6 py-2 rounded-lg font-medium hover:bg-teal-700 transition"
+          >
+            Save Activity
+          </button>
         </form>
       </div>
 
       <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-        <h2 className="text-xl font-semibold mb-4 text-gray-900">Saved Routes</h2>
-        {routes.length === 0 ? (
-          <p className="text-gray-500">No routes configured yet.</p>
+        <h2 className="text-xl font-semibold mb-4 text-gray-900">Current Routine</h2>
+        {routines.length === 0 ? (
+          <p className="text-gray-500">No routine activities configured yet.</p>
         ) : (
           <div className="space-y-4">
-            {routes.map(route => (
-              <div key={route.id} className="p-4 bg-gray-50 rounded-lg border border-gray-100 flex justify-between items-start">
+            {routines.map(routine => (
+              <div key={routine.id} className="p-4 bg-gray-50 rounded-lg border border-gray-100 flex justify-between items-start">
                 <div>
-                  <h3 className="font-semibold text-gray-900 text-lg">{route.name}</h3>
-                  <p className="text-gray-600 text-sm mb-3">{route.description}</p>
-                  <div className="flex items-center text-xs text-gray-500 gap-2">
-                    {route.locations.map((l, i) => (
-                      <span key={l.id} className="flex items-center">
-                        <span className="font-medium text-primary-teal">{l.name}</span>
-                        {i < route.locations.length - 1 && <span className="mx-2">→</span>}
-                      </span>
-                    ))}
-                  </div>
+                  <h3 className="font-semibold text-gray-900 text-lg">{routine.title}</h3>
+                  <p className="text-gray-600 text-sm">{routine.time} • {routine.category}</p>
+                  {routine.description && <p className="text-gray-500 text-xs mt-1">{routine.description}</p>}
                 </div>
                 <button 
-                  onClick={() => handleDelete(route.id)}
-                  className="text-red-500 text-sm hover:underline ml-4"
+                  onClick={() => handleDelete(routine.id)}
+                  className="text-red-500 text-sm hover:underline"
                 >
                   Delete
                 </button>
@@ -628,6 +575,77 @@ export const RouteManager: React.FC = () => {
             ))}
           </div>
         )}
+      </div>
+    </div>
+  );
+};
+
+export const DietPreferenceManager: React.FC = () => {
+  const patientId = PatientService.getProfile()?.id || 'demo-patient';
+  
+  const [preferredFoodsText, setPreferredFoodsText] = useState('');
+  const [avoidFoodsText, setAvoidFoodsText] = useState('');
+  const [mealNotes, setMealNotes] = useState('');
+
+  useEffect(() => {
+    const d = DietService.getDietPreference(patientId);
+    setPreferredFoodsText(d.preferredFoods.join(', '));
+    setAvoidFoodsText(d.foodsToAvoid.join(', '));
+    setMealNotes(d.mealNotes);
+  }, [patientId]);
+
+  const handleSave = (e: React.FormEvent) => {
+    e.preventDefault();
+    DietService.updateDietPreference(patientId, {
+      preferredFoods: preferredFoodsText.split(',').map(s => s.trim()).filter(Boolean),
+      foodsToAvoid: avoidFoodsText.split(',').map(s => s.trim()).filter(Boolean),
+      mealNotes
+    });
+    alert('Diet preferences saved successfully.');
+  };
+
+  return (
+    <div>
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">Diet Preferences</h1>
+      <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm mb-8">
+        <form onSubmit={handleSave} className="space-y-6 max-w-2xl">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Preferred Foods (comma separated)</label>
+            <input 
+              type="text" 
+              value={preferredFoodsText}
+              onChange={e => setPreferredFoodsText(e.target.value)}
+              placeholder="e.g., Rice, Dal, Vegetables"
+              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-primary-teal"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Foods to Avoid (comma separated)</label>
+            <input 
+              type="text" 
+              value={avoidFoodsText}
+              onChange={e => setAvoidFoodsText(e.target.value)}
+              placeholder="e.g., Very spicy food, Peanuts"
+              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-primary-teal"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Meal Notes & Instructions</label>
+            <textarea 
+              value={mealNotes}
+              onChange={e => setMealNotes(e.target.value)}
+              placeholder="e.g., Patient prefers a light dinner."
+              rows={4}
+              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-primary-teal"
+            />
+          </div>
+          <button 
+            type="submit" 
+            className="bg-primary-teal text-white px-6 py-2 rounded-lg font-medium hover:bg-teal-700 transition"
+          >
+            Save Preferences
+          </button>
+        </form>
       </div>
     </div>
   );

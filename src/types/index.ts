@@ -64,6 +64,28 @@ export interface Patient {
   baselineProfile?: Record<string, number>; // Domain -> Score mapping
 }
 
+export type RoutineCategory = 'Morning' | 'Meals' | 'Medicine' | 'Activity' | 'Rest' | 'Family' | 'Evening';
+
+export interface RoutineItem {
+  id: string;
+  patientId: string;
+  title: string;
+  time: string; // e.g. "07:30" or "08:30 AM"
+  category: RoutineCategory;
+  completed: boolean;
+  reminderEnabled: boolean;
+  description?: string;
+  createdAt: string; // ISO String
+}
+
+export interface DietPreference {
+  patientId: string;
+  preferredFoods: string[];
+  foodsToAvoid: string[];
+  mealNotes: string;
+  updatedAt: string; // ISO String
+}
+
 export interface Caregiver {
   id: string;
   name: string;
@@ -74,6 +96,10 @@ export interface Caregiver {
 export interface GameDefinition {
   id: string;
   name: string;
+  titleKey: string;
+  descriptionKey: string;
+  instructionsKey: string;
+  category: 'personalized' | 'general';
   domain: string;
   description: string;
   baseDifficulty: number;

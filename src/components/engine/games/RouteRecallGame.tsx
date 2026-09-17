@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { RouteService } from '../../../services/api/RouteService';
 import type { FamiliarRoute } from '../../../types';
 import { MapPin, ArrowRight, BrainCircuit, CheckCircle2, XCircle } from 'lucide-react';
+import { useLanguage } from '../../../contexts/LanguageContext';
 
 interface Props {
   difficulty: number;
@@ -42,6 +43,7 @@ export const RouteRecallGame: React.FC<Props> = ({ difficulty, routeId, onComple
   const [correctCount, setCorrectCount] = useState(0);
   const [startTime, setStartTime] = useState(Date.now());
   const [responseTimes, setResponseTimes] = useState<number[]>([]);
+  const { t } = useLanguage();
 
   useEffect(() => {
     const fetchedRoute = RouteService.getRoute(routeId);
@@ -146,7 +148,7 @@ export const RouteRecallGame: React.FC<Props> = ({ difficulty, routeId, onComple
   };
 
   if (phase === 'LOADING' || !route) {
-    return <div className="animate-pulse text-xl text-primary-teal">Loading your route...</div>;
+    return <div className="animate-pulse text-xl text-primary-teal">{t('common.loading')}</div>;
   }
 
   const maxLocations = Math.min(route.locations.length, difficulty + 2);
@@ -156,7 +158,7 @@ export const RouteRecallGame: React.FC<Props> = ({ difficulty, routeId, onComple
     return (
       <div className="flex flex-col items-center w-full max-w-2xl">
         <h3 className="text-2xl font-bold text-text-charcoal mb-8 text-center">
-          Let's review this route:<br/>
+          {t('game.review_route')}<br/>
           <span className="text-primary-teal">{route.name}</span>
         </h3>
 
@@ -176,7 +178,7 @@ export const RouteRecallGame: React.FC<Props> = ({ difficulty, routeId, onComple
                 </div>
                 <div>
                   <h4 className="text-2xl font-bold text-text-charcoal">{loc.name}</h4>
-                  {loc.landmark && <p className="text-gray-600 mt-1">Landmark: {loc.landmark}</p>}
+                  {loc.landmark && <p className="text-gray-600 mt-1">{t('game.landmark')}: {loc.landmark}</p>}
                 </div>
               </div>
             </React.Fragment>
@@ -187,7 +189,7 @@ export const RouteRecallGame: React.FC<Props> = ({ difficulty, routeId, onComple
           onClick={handleNextLearningStep}
           className="bg-primary-teal text-white px-10 py-4 rounded-xl text-xl font-bold hover:bg-teal-700 transition w-full shadow-md"
         >
-          {learningStep < maxLocations - 1 ? 'Next Location' : 'I Remember This Route'}
+          {learningStep < maxLocations - 1 ? t('game.next_location') : t('game.remember_route')}
         </button>
       </div>
     );

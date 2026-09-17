@@ -1,13 +1,21 @@
 import type { GameDefinition } from '../types';
-import memoryPoster from '../assets/games/memory-match.png';
-import attentionPoster from '../assets/games/selective-attention.jpg';
-import patternPoster from '../assets/games/pattern-completion.png';
-import spatialPoster from '../assets/games/spatial-navigation.png';
+import memoryPoster from '../assets/games/memory_match_poster.jpg';
+import attentionPoster from '../assets/games/selective_attention_poster.jpg';
+import patternPoster from '../assets/games/pattern_completion_poster.jpg';
+import spatialPoster from '../assets/games/spatial_navigation_poster.jpg';
+import whoIsThisPoster from '../assets/games/who_is_this_poster.jpg';
+import memoryMomentsPoster from '../assets/games/memory_moments_poster.jpg';
+import myLifeStoryPoster from '../assets/games/my_life_story_poster.jpg';
+import favoriteSongPoster from '../assets/games/favorite_song_poster.jpg';
 
 export const GameRegistry: GameDefinition[] = [
   {
     id: 'memory-game',
     name: 'Memory Match',
+    titleKey: 'game.memoryMatch.title',
+    descriptionKey: 'game.memoryMatch.description',
+    instructionsKey: 'game.memoryMatch.instructions',
+    category: 'general',
     domain: 'memory',
     description: 'Remember the objects shown and identify them later.',
     baseDifficulty: 1,
@@ -19,6 +27,10 @@ export const GameRegistry: GameDefinition[] = [
   {
     id: 'attention-game',
     name: 'Selective Attention',
+    titleKey: 'game.selectiveAttention.title',
+    descriptionKey: 'game.selectiveAttention.description',
+    instructionsKey: 'game.selectiveAttention.instructions',
+    category: 'general',
     domain: 'attention',
     description: 'Find the target symbol among distractors quickly.',
     baseDifficulty: 1,
@@ -30,6 +42,10 @@ export const GameRegistry: GameDefinition[] = [
   {
     id: 'pattern-game',
     name: 'Pattern Completion',
+    titleKey: 'game.patternCompletion.title',
+    descriptionKey: 'game.patternCompletion.description',
+    instructionsKey: 'game.patternCompletion.instructions',
+    category: 'general',
     domain: 'pattern',
     description: 'Identify what comes next in the visual sequence.',
     baseDifficulty: 1,
@@ -41,6 +57,10 @@ export const GameRegistry: GameDefinition[] = [
   {
     id: 'spatial-game',
     name: 'Spatial Navigation',
+    titleKey: 'game.spatialNavigation.title',
+    descriptionKey: 'game.spatialNavigation.description',
+    instructionsKey: 'game.spatialNavigation.instructions',
+    category: 'general',
     domain: 'spatial',
     description: 'Find the correct direction to reach the target.',
     baseDifficulty: 1,
@@ -52,40 +72,60 @@ export const GameRegistry: GameDefinition[] = [
   {
     id: 'who-is-this',
     name: 'Who Is This?',
+    titleKey: 'game.whoIsThis.title',
+    descriptionKey: 'game.whoIsThis.description',
+    instructionsKey: 'game.whoIsThis.instructions',
+    category: 'personalized',
     domain: 'personal_person',
     description: 'Recognize familiar people from your life.',
     baseDifficulty: 1,
     icon: 'Users',
+    poster: whoIsThisPoster,
     estimatedDuration: '3 min',
     instructions: 'Look at the photo and select the name or relationship of the person shown.'
   },
   {
     id: 'memory-moments',
     name: 'Memory Moments',
+    titleKey: 'game.memoryMoments.title',
+    descriptionKey: 'game.memoryMoments.description',
+    instructionsKey: 'game.memoryMoments.instructions',
+    category: 'personalized',
     domain: 'personal_memory',
     description: 'Recall details from important moments in your life.',
     baseDifficulty: 1,
     icon: 'Image',
+    poster: memoryMomentsPoster,
     estimatedDuration: '4 min',
     instructions: 'Look at the memory, then answer questions about where or when it happened.'
   },
   {
     id: 'life-story',
     name: 'My Life Story',
+    titleKey: 'game.myLifeStory.title',
+    descriptionKey: 'game.myLifeStory.description',
+    instructionsKey: 'game.myLifeStory.instructions',
+    category: 'personalized',
     domain: 'personal_timeline',
     description: 'Arrange your life events in the correct order.',
     baseDifficulty: 2,
     icon: 'Calendar',
+    poster: myLifeStoryPoster,
     estimatedDuration: '5 min',
     instructions: 'Look at the events and select the one that happened first.'
   },
   {
     id: 'favorite-song',
     name: 'My Favorite Song',
+    titleKey: 'game.favoriteSong.title',
+    descriptionKey: 'game.favoriteSong.description',
+    instructionsKey: 'game.favoriteSong.instructions',
+    category: 'personalized',
     domain: 'personal_song',
     description: 'Recognize music that is important to you.',
     baseDifficulty: 1,
     icon: 'Music',
+    poster: favoriteSongPoster,
     estimatedDuration: '2 min',
     instructions: 'Listen to the audio clip and tell us what song it is.'
   }

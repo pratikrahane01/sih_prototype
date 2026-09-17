@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Apple, Car, Dog, Sun, Moon, Leaf, Heart, Star } from 'lucide-react';
+import { useLanguage } from '../../../contexts/LanguageContext';
 
 interface Props {
   difficulty: number;
@@ -23,6 +24,7 @@ export const MemoryGame: React.FC<Props> = ({ difficulty, onComplete }) => {
   const [options, setOptions] = useState<typeof ALL_ITEMS>([]);
   const [selected, setSelected] = useState<string[]>([]);
   const [startTime, setStartTime] = useState<number>(0);
+  const { t } = useLanguage();
 
   // Difficulty scaling
   const numTargets = Math.min(3 + (difficulty - 1), 6); // Diff 1: 3, Diff 4: 6
@@ -139,7 +141,7 @@ export const MemoryGame: React.FC<Props> = ({ difficulty, onComplete }) => {
             onClick={handleSubmit}
             className="bg-primary-teal text-white px-12 py-4 rounded-full text-2xl font-medium hover:bg-teal-700 transition"
           >
-            Submit Answer
+            {t('game.submit')}
           </button>
         </>
       )}
