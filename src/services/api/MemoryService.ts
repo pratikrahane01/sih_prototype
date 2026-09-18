@@ -5,7 +5,7 @@ const MEMORY_STORAGE_KEY = 'sih_patient_memories';
 const PERSON_STORAGE_KEY = 'sih_patient_people';
 // Bump this version to force re-seed (wipes old demo data and replaces with fresh data)
 const DEMO_SEED_VERSION_KEY = 'sih_demo_seed_version';
-const DEMO_SEED_VERSION = '2'; // v2 = Arun/Meena/Riya with proper images
+const DEMO_SEED_VERSION = '4'; // v4 = Using actual downloaded audio files
 
 class MemoryServiceClass {
   private getMemories(): PersonalMemory[] {
@@ -166,7 +166,7 @@ class MemoryServiceClass {
       // Wipe old stale demo data (e.g., previous seed with Anita/Ramesh/Meena)
       const allMemories = this.getMemories();
       const demoMemIds = new Set(DEMO_MEMORIES.map(m => m.id));
-      const userMemories = allMemories.filter(m => !demoMemIds.has(m.id));
+      const userMemories = allMemories.filter(m => !demoMemIds.has(m.id) && m.id !== 'demo_mem_song');
       this.saveMemories(userMemories);
 
       const allPeople = this.getPeople();

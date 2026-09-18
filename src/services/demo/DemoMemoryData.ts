@@ -155,15 +155,64 @@ export const DEMO_MEMORIES: DemoMemory[] = [
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
-  // ── Song ─────────────────────────────────────────────────────────────────────
+  // ── Songs (Top 5 Regional Classics) ──────────────────────────────────────────
   {
-    id: 'demo_mem_song',
+    id: 'demo_mem_song_1',
+    patientId: DEMO_PATIENT_ID,
+    type: 'SONG',
+    category: 'Important Moments',
+    title: 'Shukratara Mand Wara',
+    content: JSON.stringify({ singer: 'Arun Date', movie: 'Bhavgeet', hint: 'The singer is Arun Date and it is a classic Bhavgeet.' }),
+    image: '/demo-memories/favorite-song.jpg',
+    audioUrl: '/audio/song_1.m4a',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  },
+  {
+    id: 'demo_mem_song_2',
+    patientId: DEMO_PATIENT_ID,
+    type: 'SONG',
+    category: 'Important Moments',
+    title: 'Airaneechya Deva Tula',
+    content: JSON.stringify({ singer: 'Lata Mangeshkar', movie: 'Sadhi Manasa', hint: 'This song is sung by Lata Mangeshkar from the movie Sadhi Manasa.' }),
+    image: '/demo-memories/favorite-song.jpg',
+    audioUrl: '/audio/song_2.m4a',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  },
+  {
+    id: 'demo_mem_song_3',
+    patientId: DEMO_PATIENT_ID,
+    type: 'SONG',
+    category: 'Important Moments',
+    title: 'Mendichya Panavar',
+    content: JSON.stringify({ singer: 'Lata Mangeshkar', movie: 'Bhavgeet', hint: 'It is a classic Marathi Bhavgeet sung by Lata Mangeshkar.' }),
+    image: '/demo-memories/favorite-song.jpg',
+    audioUrl: '/audio/song_3.m4a',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  },
+  {
+    id: 'demo_mem_song_4',
+    patientId: DEMO_PATIENT_ID,
+    type: 'SONG',
+    category: 'Important Moments',
+    title: 'Mi Dolkar Daryacha Raja',
+    content: JSON.stringify({ singer: 'Hemant Kumar', movie: 'Koli Geet', hint: 'It is a famous Koli song sung by Hemant Kumar and Lata Mangeshkar.' }),
+    image: '/demo-memories/favorite-song.jpg',
+    audioUrl: '/audio/song_4.m4a',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  },
+  {
+    id: 'demo_mem_song_5',
     patientId: DEMO_PATIENT_ID,
     type: 'SONG',
     category: 'Important Moments',
     title: 'Lag Ja Gale',
-    content: 'A favourite Hindi song from the younger days. Always brings back fond memories.',
+    content: JSON.stringify({ singer: 'Lata Mangeshkar', movie: 'Woh Kaun Thi', hint: 'It is a classic Hindi song from the movie Woh Kaun Thi, sung by Lata Mangeshkar.' }),
     image: '/demo-memories/favorite-song.jpg',
+    audioUrl: '/audio/song_5.m4a',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   }

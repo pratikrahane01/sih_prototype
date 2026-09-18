@@ -10,6 +10,8 @@ import { ActivityInsightService } from '../../services/api/ActivityInsightServic
 import { useLanguage } from '../../contexts/LanguageContext';
 import nerHero from '../../assets/cultural/ner-hero.jpg';
 import nerBanner from '../../assets/cultural/ner-banner.jpg';
+import moreActivitiesPoster from '../../assets/games/more_games_poster.jpg';
+import insightsHero from '../../assets/cultural/insights-hero.jpg';
 
 const getIconComponent = (iconName: string) => {
   switch (iconName) {
@@ -47,6 +49,17 @@ const ActivityCard = ({ icon: Icon, title, description, to, bgColor, poster }: a
   </Link>
 );
 
+// Map games to pastel colors
+const getColor = (domain: string) => {
+  switch (domain) {
+    case 'memory': return 'bg-[#FFE8E8]'; // Soft pink
+    case 'attention': return 'bg-[#E8F0FE]'; // Soft blue
+    case 'pattern': return 'bg-[#FFF3E0]'; // Soft amber
+    case 'spatial': return 'bg-[#E8F5E9]'; // Soft sage/green
+    default: return 'bg-[#F3E5F5]'; // Soft lavender
+  }
+};
+
 export const PatientHome: React.FC = () => {
   const [profile, setProfile] = useState<Patient | null>(null);
   const { t } = useLanguage();
@@ -56,17 +69,6 @@ export const PatientHome: React.FC = () => {
   }, []);
 
   const displayName = profile?.nickname || profile?.name || 'Friend';
-
-  // Map games to pastel colors
-  const getColor = (domain: string) => {
-    switch (domain) {
-      case 'memory': return 'bg-[#FFE8E8]'; // Soft pink
-      case 'attention': return 'bg-[#E8F0FE]'; // Soft blue
-      case 'pattern': return 'bg-[#FFF3E0]'; // Soft amber
-      case 'spatial': return 'bg-[#E8F5E9]'; // Soft sage/green
-      default: return 'bg-[#F3E5F5]'; // Soft lavender
-    }
-  };
 
   return (
     <div className="flex flex-col w-full max-w-7xl mx-auto space-y-6 md:space-y-8 px-4 sm:px-6 md:px-8 mt-2 md:mt-4">
@@ -93,34 +95,7 @@ export const PatientHome: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
-          {GameRegistry.filter(g => g.category === 'personalized').map(game => (
-            <ActivityCard
-              key={game.id}
-              icon={getIconComponent(game.icon)}
-              title={t(game.titleKey, game.name)}
-              description={t(game.descriptionKey, game.description)}
-              to={`/patient/game/${game.id}`}
-              bgColor={getColor(game.domain)}
-              poster={game.poster}
-            />
-          ))}
-        </div>
-      </section>
-
-      {/* General Cognitive Activities Section */}
-      <section className="bg-white rounded-[32px] p-5 sm:p-6 md:p-10 shadow-sm border border-gray-100 relative overflow-hidden">
-        <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-blue-500/20 via-blue-600/30 to-blue-500/20"></div>
-        
-        <div className="flex flex-col mb-5 md:mb-8 pl-3">
-          <h3 className="text-[1.5rem] sm:text-[1.75rem] md:text-3xl font-bold text-text-charcoal flex items-center gap-3">
-            <Brain className="w-7 h-7 md:w-8 md:h-8 text-primary-teal" />
-            {t('home.generalCognitiveActivities')}
-          </h3>
-          <p className="text-[14px] sm:text-[15px] md:text-lg text-text-charcoal/60 font-medium mt-1">{t('home.generalCognitiveActivitiesDesc')}</p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
-          {GameRegistry.filter(g => g.category === 'general').map(game => (
+          {GameRegistry.filter(g => g.id === 'who-is-this' || g.id === 'favorite-song').map(game => (
             <ActivityCard
               key={game.id}
               icon={getIconComponent(game.icon)}
@@ -137,6 +112,7 @@ export const PatientHome: React.FC = () => {
             description={t('home.exploreActivities')}
             to="/patient/games"
             bgColor="bg-[#E8F5E9]" // Soft green
+            poster={moreActivitiesPoster}
           />
         </div>
       </section>
@@ -148,7 +124,7 @@ export const PatientHome: React.FC = () => {
             <div className="bg-primary-teal text-white p-1.5 rounded-full flex items-center justify-center">
               <Star className="w-5 h-5 fill-current" />
             </div>
-            {t('home.quick_info')}
+            {t('home.quickInfo')}
           </h3>
         </div>
         
@@ -158,8 +134,8 @@ export const PatientHome: React.FC = () => {
             <div className="bg-white rounded-[16px] p-3 text-ai-blue shadow-sm mb-3 group-hover:scale-105 transition-transform">
               <Calendar className="w-6 h-6 sm:w-8 sm:h-8 stroke-2" />
             </div>
-            <h4 className="text-[16px] sm:text-[1.25rem] font-bold text-text-charcoal leading-tight mb-1">{t('home.daily_routine')}</h4>
-            <p className="text-text-charcoal/70 text-[12px] sm:text-sm font-medium pr-4 sm:pr-6">{t('home.view_routine')}</p>
+            <h4 className="text-[16px] sm:text-[1.25rem] font-bold text-text-charcoal leading-tight mb-1">{t('home.dailyRoutine')}</h4>
+            <p className="text-text-charcoal/70 text-[12px] sm:text-sm font-medium pr-4 sm:pr-6">{t('home.viewRoutine')}</p>
             <Play className="w-3 h-3 sm:w-4 sm:h-4 text-text-charcoal/40 absolute bottom-4 right-4 group-hover:text-primary-teal transition-colors" />
           </Link>
           
@@ -168,8 +144,8 @@ export const PatientHome: React.FC = () => {
             <div className="bg-white rounded-[16px] p-3 text-secondary-sage shadow-sm mb-3 group-hover:scale-105 transition-transform">
               <Heart className="w-6 h-6 sm:w-8 sm:h-8 stroke-2" />
             </div>
-            <h4 className="text-[16px] sm:text-[1.25rem] font-bold text-text-charcoal leading-tight mb-1">{t('home.diet_preference')}</h4>
-            <p className="text-text-charcoal/70 text-[12px] sm:text-sm font-medium pr-4 sm:pr-6">{t('home.food_preferences')}</p>
+            <h4 className="text-[16px] sm:text-[1.25rem] font-bold text-text-charcoal leading-tight mb-1">{t('home.dietPreference')}</h4>
+            <p className="text-text-charcoal/70 text-[12px] sm:text-sm font-medium pr-4 sm:pr-6">{t('home.foodPreferences')}</p>
             <Play className="w-3 h-3 sm:w-4 sm:h-4 text-text-charcoal/40 absolute bottom-4 right-4 group-hover:text-primary-teal transition-colors" />
           </Link>
 
@@ -178,8 +154,8 @@ export const PatientHome: React.FC = () => {
             <div className="bg-white rounded-[16px] p-3 text-attention-amber shadow-sm mb-3 group-hover:scale-105 transition-transform">
               <Clock className="w-6 h-6 sm:w-8 sm:h-8 stroke-2" />
             </div>
-            <h4 className="text-[16px] sm:text-[1.25rem] font-bold text-text-charcoal leading-tight mb-1">Recent Activity</h4>
-            <p className="text-text-charcoal/70 text-[12px] sm:text-sm font-medium pr-4 sm:pr-6">View your past sessions</p>
+            <h4 className="text-[16px] sm:text-[1.25rem] font-bold text-text-charcoal leading-tight mb-1">{t('home.recentActivity')}</h4>
+            <p className="text-text-charcoal/70 text-[12px] sm:text-sm font-medium pr-4 sm:pr-6">{t('home.viewPastSessions')}</p>
             <Play className="w-3 h-3 sm:w-4 sm:h-4 text-text-charcoal/40 absolute bottom-4 right-4 group-hover:text-primary-teal transition-colors" />
           </Link>
         </div>
@@ -191,7 +167,7 @@ export const PatientHome: React.FC = () => {
         <div className="absolute inset-0 bg-black/15"></div>
         <div className="relative z-10 p-5 sm:p-6 text-center w-full">
           <h4 className="text-[20px] sm:text-2xl md:text-3xl font-serif italic text-white drop-shadow-lg tracking-wide leading-snug">
-            "A healthier mind<br className="sm:hidden" /> leads to a brighter tomorrow"
+            {t('home.motivationalBanner', '"A healthier mind leads to a brighter tomorrow"')}
           </h4>
           <div className="w-10 sm:w-12 h-1 bg-white/70 mx-auto mt-3 sm:mt-4 rounded-full"></div>
         </div>
@@ -201,53 +177,30 @@ export const PatientHome: React.FC = () => {
 };
 
 export const GamesList: React.FC = () => {
-  const navigate = useNavigate();
   const { t } = useLanguage();
 
   const personalGames = GameRegistry.filter(g => g.category === 'personalized');
   const cognitiveGames = GameRegistry.filter(g => g.category === 'general');
 
-  const renderGameCard = (game: typeof GameRegistry[0]) => {
-    const Icon = getIconComponent(game.icon);
-    return (
-      <div key={game.id} className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-shadow flex flex-col">
-        <div className="flex items-start mb-4">
-          <div className="w-16 h-16 bg-blue-50 text-ai-blue rounded-2xl flex items-center justify-center mr-4 shrink-0">
-            {game.icon === 'Users' ? <UserCircle className="w-8 h-8" /> : <Icon className="w-8 h-8" />}
-          </div>
-          <div className="flex-1">
-            <h3 className="text-2xl font-bold text-text-charcoal mb-1">{t(game.titleKey, game.name)}</h3>
-            <div className="flex items-center text-text-charcoal/60 text-sm">
-              <Clock className="w-4 h-4 mr-1" />
-              <span>{game.estimatedDuration}</span>
-            </div>
-          </div>
-        </div>
-        
-        <p className="text-lg text-text-charcoal/80 flex-1 mb-6">
-          {t(game.descriptionKey, game.description)}
-        </p>
-
-        <button 
-          onClick={() => navigate(`/patient/game/${game.id}`)}
-          className="w-full flex items-center justify-center bg-gray-50 hover:bg-primary-teal hover:text-white text-primary-teal py-4 rounded-xl text-xl font-semibold transition-colors group"
-        >
-          <Play className="w-5 h-5 mr-2 group-hover:text-white text-primary-teal" />
-          {t('game.start_activity')}
-        </button>
-      </div>
-    );
-  };
-
   return (
-    <div className="w-full flex flex-col items-center">
+    <div className="w-full flex flex-col items-center px-4 md:px-0">
       
       {/* SECTION 1: Personal Memories */}
       <div className="mb-6 w-full max-w-4xl">
         <h2 className="text-3xl font-bold text-primary-teal mb-2">{t('home.personalizedActivities')}</h2>
         <p className="text-lg text-text-charcoal/80 mb-6 font-medium">{t('home.personalizedActivitiesDesc')}</p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
-          {personalGames.map(renderGameCard)}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 w-full">
+          {personalGames.map(game => (
+            <ActivityCard
+              key={game.id}
+              icon={getIconComponent(game.icon)}
+              title={t(game.titleKey, game.name)}
+              description={t(game.descriptionKey, game.description)}
+              to={`/patient/game/${game.id}`}
+              bgColor={getColor(game.domain)}
+              poster={game.poster}
+            />
+          ))}
         </div>
       </div>
 
@@ -257,13 +210,18 @@ export const GamesList: React.FC = () => {
       <div className="mb-6 w-full max-w-4xl">
         <h2 className="text-3xl font-bold text-primary-teal mb-2">{t('home.generalCognitiveActivities')}</h2>
         <p className="text-lg text-text-charcoal/80 mb-6 font-medium">{t('home.generalCognitiveActivitiesDesc')}</p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
-          {cognitiveGames.map(renderGameCard)}
-          <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-shadow flex flex-col items-center justify-center min-h-[280px]">
-            <Activity className="w-16 h-16 text-primary-teal mb-4" />
-            <h3 className="text-2xl font-bold text-text-charcoal mb-2">{t('home.moreGames')}</h3>
-            <p className="text-lg text-text-charcoal/60 text-center">{t('home.exploreActivities')}</p>
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 w-full">
+          {cognitiveGames.map(game => (
+            <ActivityCard
+              key={game.id}
+              icon={getIconComponent(game.icon)}
+              title={t(game.titleKey, game.name)}
+              description={t(game.descriptionKey, game.description)}
+              to={`/patient/game/${game.id}`}
+              bgColor={getColor(game.domain)}
+              poster={game.poster}
+            />
+          ))}
         </div>
       </div>
 
@@ -334,11 +292,16 @@ export const Insights: React.FC = () => {
   const { t } = useLanguage();
   
   return (
-    <div className="w-full flex flex-col items-center px-4 md:px-0 pb-10">
-      <div className="mb-10 text-center w-full max-w-4xl">
-        <h2 className="text-4xl font-bold text-primary-teal mb-4">{t('insights.title')}</h2>
-        <p className="text-xl text-text-charcoal/80 font-medium">{t('insights.subtitle')}</p>
-      </div>
+    <div className="w-full flex flex-col items-center px-4 md:px-0 pb-10 mt-2 md:mt-4 space-y-6 md:space-y-8">
+      {/* Insights Hero Section */}
+      <section className="relative w-full max-w-4xl rounded-[32px] overflow-hidden min-h-[180px] md:min-h-[220px] flex items-center shadow-sm">
+        <img src={insightsHero} alt="Your Insights" className="absolute inset-0 w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-transparent"></div>
+        <div className="relative z-10 p-6 md:p-10 w-full md:w-2/3">
+          <h2 className="text-3xl sm:text-4xl md:text-[3.5rem] font-bold text-primary-teal mb-2 leading-tight">{t('insights.title')}</h2>
+          <p className="text-[17px] sm:text-lg md:text-2xl text-text-charcoal/80 font-medium">{t('insights.subtitle')}</p>
+        </div>
+      </section>
 
       <div className="w-full max-w-4xl space-y-8">
         

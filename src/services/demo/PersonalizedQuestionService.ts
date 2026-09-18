@@ -104,6 +104,9 @@ export interface SongQuestion {
   song: PersonalMemory | DemoMemory;
   options: string[];
   correctAnswer: string;
+  voiceQuestion: string;
+  voiceHint: string;
+  keywords: string[];
 }
 
 // ── Question Generators ────────────────────────────────────────────────────────
@@ -299,24 +302,57 @@ export function generateFavoriteSongQuestions(
   difficulty: number
 ): SongQuestion[] {
   const allMemories = getEffectiveMemories(patientId);
-  const songs = allMemories.filter(m => m.type === 'SONG');
+  let songs = allMemories.filter(m => m.type === 'SONG');
+
+  // Fallback: If caregiver hasn't added any songs specifically, use the top 5 regional demo songs.
+  if (songs.length === 0) {
+    songs = DEMO_MEMORIES.filter(m => m.type === 'SONG');
+  }
 
   if (songs.length === 0) return [];
 
-  const numQ = difficulty === 1 ? Math.min(1, songs.length)
-             : difficulty === 2 ? Math.min(2, songs.length)
-             : Math.min(3, songs.length);
+  const numQ = difficulty === 1 ? Math.min(3, songs.length)
+             : difficulty === 2 ? Math.min(4, songs.length)
+             : Math.min(5, songs.length);
 
   const selected = shuffle(songs).slice(0, numQ);
 
   return selected.map(song => {
-    const correctAnswer = song.title;
-    const otherSongTitles = songs
+    let metadata: any = {};
+    try {
+      metadata = JSON.parse(song.content);
+    } catch(e) {
+      metadata = { singer: 'Unknown', movie: 'Unknown', hint: 'Listen carefully to the melody.' };
+    }
+
+    const isAskSinger = metadata.singer && metadata.singer !== 'Unknown' && Math.random() > 0.5;
+    
+    const correctAnswer = isAskSinger ? metadata.singer : song.title;
+    
+    // Voice prompt questions
+    const voiceQuestion = isAskSinger 
+      ? "Who sang this beautiful song?" 
+      : "Can you tell me the name of this song?";
+      
+    const voiceHint = metadata.hint || "Try to remember the melody.";
+    
+    // Basic keywords for loose speech matching
+    const keywords = correctAnswer.toLowerCase().replace(/[^a-z0-9 ]/g, '').split(' ').filter((w: string) => w.length > 2);
+    keywords.push(correctAnswer.toLowerCase());
+
+    const otherOptions = songs
       .filter(s => s.id !== song.id)
-      .map(s => s.title);
+      .map(s => {
+         try {
+           const meta = JSON.parse(s.content);
+           return isAskSinger ? meta.singer : s.title;
+         } catch (e) {
+           return s.title;
+         }
+      });
 
     const distractors = pickDistractors(
-      [...otherSongTitles, ...DISTRACTOR_SONGS],
+      [...otherOptions, ...DISTRACTOR_SONGS],
       correctAnswer,
       3
     );
@@ -324,7 +360,10 @@ export function generateFavoriteSongQuestions(
     return {
       song,
       options: shuffle([correctAnswer, ...distractors]),
-      correctAnswer
+      correctAnswer,
+      voiceQuestion,
+      voiceHint,
+      keywords
     };
   });
 }

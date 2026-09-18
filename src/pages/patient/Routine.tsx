@@ -5,6 +5,7 @@ import { LanguageService, SpeechSynthesisService } from '../../services/accessib
 import { useLanguage } from '../../contexts/LanguageContext';
 import type { RoutineItem } from '../../types';
 import { CheckCircle2, Circle, Sun, Coffee, Pill, Activity, Moon, Users, Clock } from 'lucide-react';
+import routineHero from '../../assets/cultural/routine-hero.jpg';
 
 const getCategoryIcon = (category: string) => {
   switch (category) {
@@ -113,11 +114,16 @@ export const DailyRoutine: React.FC = () => {
   };
 
   return (
-    <div className="w-full flex flex-col items-center px-4 md:px-0">
-      <div className="mb-10 text-center w-full max-w-3xl">
-        <h2 className="text-4xl font-bold text-primary-teal mb-4">{t('routine.title')}</h2>
-        <p className="text-xl text-text-charcoal/80 font-medium">{t('routine.subtitle')}</p>
-      </div>
+    <div className="w-full flex flex-col items-center px-4 md:px-0 mt-2 md:mt-4 space-y-6 md:space-y-8 pb-10">
+      {/* Routine Hero Section */}
+      <section className="relative w-full max-w-4xl rounded-[32px] overflow-hidden min-h-[180px] md:min-h-[220px] flex items-center shadow-sm">
+        <img src={routineHero} alt="Daily Routine" className="absolute inset-0 w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-transparent"></div>
+        <div className="relative z-10 p-6 md:p-10 w-full md:w-2/3">
+          <h2 className="text-3xl sm:text-4xl md:text-[3.5rem] font-bold text-primary-teal mb-2 leading-tight">{t('routine.title')}</h2>
+          <p className="text-[17px] sm:text-lg md:text-2xl text-text-charcoal/80 font-medium">{t('routine.subtitle')}</p>
+        </div>
+      </section>
 
       <div className="w-full max-w-3xl">
         {routines.length === 0 ? (
