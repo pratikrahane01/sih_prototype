@@ -5,7 +5,7 @@ const MEMORY_STORAGE_KEY = 'sih_patient_memories';
 const PERSON_STORAGE_KEY = 'sih_patient_people';
 // Bump this version to force re-seed (wipes old demo data and replaces with fresh data)
 const DEMO_SEED_VERSION_KEY = 'sih_demo_seed_version';
-const DEMO_SEED_VERSION = '4'; // v4 = Using actual downloaded audio files
+const DEMO_SEED_VERSION = '6'; // v6 = 15 songs total (5 per language)
 
 class MemoryServiceClass {
   private getMemories(): PersonalMemory[] {

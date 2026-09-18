@@ -17,6 +17,7 @@
  */
 
 import { MemoryService } from '../api/MemoryService';
+import { LanguageService } from '../accessibility/LanguageService';
 import {
   DEMO_PEOPLE,
   DEMO_MEMORIES,
@@ -304,9 +305,32 @@ export function generateFavoriteSongQuestions(
   const allMemories = getEffectiveMemories(patientId);
   let songs = allMemories.filter(m => m.type === 'SONG');
 
-  // Fallback: If caregiver hasn't added any songs specifically, use the top 5 regional demo songs.
+  // Fallback: If caregiver hasn't added any songs specifically, use the regional demo songs based on active language.
   if (songs.length === 0) {
-    songs = DEMO_MEMORIES.filter(m => m.type === 'SONG');
+    const lang = LanguageService.getCurrentLanguageCode();
+    songs = DEMO_MEMORIES.filter(m => {
+      if (m.type !== 'SONG') return false;
+      try {
+        const content = JSON.parse(m.content);
+        return content.language === lang;
+      } catch (e) {
+        return false;
+      }
+    });
+
+    // If no songs found for the selected language, fallback to Hindi (or all if even Hindi is empty)
+    if (songs.length === 0) {
+       songs = DEMO_MEMORIES.filter(m => {
+         if (m.type !== 'SONG') return false;
+         try {
+           const content = JSON.parse(m.content);
+           return content.language === 'hi';
+         } catch(e) { return false; }
+       });
+       if (songs.length === 0) {
+          songs = DEMO_MEMORIES.filter(m => m.type === 'SONG');
+       }
+    }
   }
 
   if (songs.length === 0) return [];
