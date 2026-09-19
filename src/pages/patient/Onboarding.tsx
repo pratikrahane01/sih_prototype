@@ -12,6 +12,8 @@ import { SpatialBaseline } from '../../components/games/SpatialBaseline';
 import { BaselineSummary } from '../../components/games/BaselineSummary';
 import { useLanguage } from '../../contexts/LanguageContext';
 
+import { Sparkles } from 'lucide-react';
+
 export const Onboarding: React.FC = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
@@ -33,6 +35,21 @@ export const Onboarding: React.FC = () => {
   const [duration, setDuration] = useState(10);
   const [time, setTime] = useState('Morning');
   const [voice, setVoice] = useState(true);
+
+  const handleAutoFill = () => {
+    setName('Radha Sharma');
+    setAge(68);
+    setLanguage('en');
+    setNickname('Radha');
+    setFavoriteActivities('Gardening, Classical Music, Morning Walks');
+    setFavoriteColors('Teal, Yellow, White');
+    setCgName('Anita Sharma');
+    setCgRelation('Daughter');
+    setCgContact('+91 98765 43210');
+    setDuration(10);
+    setTime('Morning');
+    setVoice(true);
+  };
 
   const handleNext = () => setStep(s => s + 1);
 
@@ -120,7 +137,18 @@ export const Onboarding: React.FC = () => {
       case 1:
         return (
           <div className="w-full max-w-lg mx-auto">
-            <h2 className="text-3xl font-bold text-primary-teal mb-8 text-center">{t('onboarding.basicInfo')}</h2>
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-3xl font-bold text-primary-teal">{t('onboarding.basicInfo')}</h2>
+              <button
+                type="button"
+                onClick={handleAutoFill}
+                className="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300 rounded-full text-sm font-semibold transition-all shadow-xs cursor-pointer active:scale-95"
+                title="Fill demo values"
+              >
+                <Sparkles className="w-4 h-4 text-emerald-600" />
+                Auto Fill
+              </button>
+            </div>
             <div className="space-y-6">
               <div>
                 <label className="block text-xl mb-2">{t('onboarding.whatIsName')}</label>
@@ -158,8 +186,19 @@ export const Onboarding: React.FC = () => {
       case 2:
         return (
           <div className="w-full max-w-lg mx-auto">
-            <h2 className="text-3xl font-bold text-primary-teal mb-8 text-center">{t('onboarding.bitAboutYou')}</h2>
-            <p className="text-lg text-text-charcoal/70 mb-6 text-center">{t('onboarding.optionalHelp')}</p>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-3xl font-bold text-primary-teal">{t('onboarding.bitAboutYou')}</h2>
+              <button
+                type="button"
+                onClick={handleAutoFill}
+                className="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300 rounded-full text-sm font-semibold transition-all shadow-xs cursor-pointer active:scale-95"
+                title="Fill demo values"
+              >
+                <Sparkles className="w-4 h-4 text-emerald-600" />
+                Auto Fill
+              </button>
+            </div>
+            <p className="text-lg text-text-charcoal/70 mb-6">{t('onboarding.optionalHelp')}</p>
             <div className="space-y-6">
               <div>
                 <label className="block text-xl mb-2">{t('onboarding.nickname')}</label>
@@ -182,7 +221,18 @@ export const Onboarding: React.FC = () => {
       case 3:
         return (
           <div className="w-full max-w-lg mx-auto">
-            <h2 className="text-3xl font-bold text-primary-teal mb-8 text-center">{t('onboarding.caregiverDetails')}</h2>
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-3xl font-bold text-primary-teal">{t('onboarding.caregiverDetails')}</h2>
+              <button
+                type="button"
+                onClick={handleAutoFill}
+                className="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300 rounded-full text-sm font-semibold transition-all shadow-xs cursor-pointer active:scale-95"
+                title="Fill demo values"
+              >
+                <Sparkles className="w-4 h-4 text-emerald-600" />
+                Auto Fill
+              </button>
+            </div>
             <div className="space-y-6">
               <div>
                 <label className="block text-xl mb-2">{t('onboarding.caregiverName')}</label>
@@ -205,7 +255,18 @@ export const Onboarding: React.FC = () => {
       case 4:
         return (
           <div className="w-full max-w-lg mx-auto">
-            <h2 className="text-3xl font-bold text-primary-teal mb-8 text-center">{t('onboarding.yourPreferences')}</h2>
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-3xl font-bold text-primary-teal">{t('onboarding.yourPreferences')}</h2>
+              <button
+                type="button"
+                onClick={handleAutoFill}
+                className="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300 rounded-full text-sm font-semibold transition-all shadow-xs cursor-pointer active:scale-95"
+                title="Fill demo values"
+              >
+                <Sparkles className="w-4 h-4 text-emerald-600" />
+                Auto Fill
+              </button>
+            </div>
             <div className="space-y-8">
               <div>
                 <label className="block text-xl mb-4 text-center">{t('onboarding.activityDuration')}</label>

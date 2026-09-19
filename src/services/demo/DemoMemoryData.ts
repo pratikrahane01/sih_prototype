@@ -215,6 +215,7 @@ export const DEMO_MEMORIES: DemoMemory[] = [
     audioUrl: '/audio/song_5.m4a',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
+  },
   {
     id: 'demo_mem_song_6',
     patientId: DEMO_PATIENT_ID,

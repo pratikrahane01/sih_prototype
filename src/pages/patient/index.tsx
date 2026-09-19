@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { PatientService } from '../../services/api/PatientService';
 import type { Patient } from '../../types';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { GameRegistry } from '../../data/GameRegistry';
 import { GameEngine } from '../../components/engine/GameEngine';
-import { Brain, Star, Activity, Clock, Play, UserCircle, Calendar, Heart, TrendingUp, AlertCircle, Map } from 'lucide-react';
+import { Brain, Star, Activity, Clock, Play, Calendar, Heart, TrendingUp, AlertCircle, Map } from 'lucide-react';
 import { CaregiverAnalyticsService } from '../../services/api/CaregiverAnalyticsService';
 import { ActivityInsightService } from '../../services/api/ActivityInsightService';
 import { useLanguage } from '../../contexts/LanguageContext';

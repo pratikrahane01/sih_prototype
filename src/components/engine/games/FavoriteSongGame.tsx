@@ -5,7 +5,7 @@ import { SpeechRecognitionService, type SpeechRecognitionState } from '../../../
 import { LanguageService } from '../../../services/accessibility/LanguageService';
 import { generateFavoriteSongQuestions, type SongQuestion } from '../../../services/demo/PersonalizedQuestionService';
 import { DEMO_PATIENT_ID } from '../../../services/demo/DemoMemoryData';
-import { Volume2, Play, Pause, RotateCcw, Music, CheckCircle, XCircle, Mic, AlertCircle } from 'lucide-react';
+import { Volume2, Play, Music, CheckCircle, Mic, AlertCircle } from 'lucide-react';
 import { useLanguage } from '../../../contexts/LanguageContext';
 
 const LABELS = ['A', 'B', 'C', 'D'];
@@ -40,7 +40,7 @@ export const FavoriteSongGame: React.FC<Props> = ({ difficulty, onComplete }) =>
   const mistakesRef  = useRef(0);
   const hintsRef     = useRef(0);
   const audioRef     = useRef<HTMLAudioElement | null>(null);
-  const timeoutRef   = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef   = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { t } = useLanguage();
 
   useEffect(() => {
@@ -320,6 +320,11 @@ export const FavoriteSongGame: React.FC<Props> = ({ difficulty, onComplete }) =>
              <CheckCircle className="w-12 h-12 text-green-500 mb-3 animate-bounce" />
              <p className="text-xl font-bold text-green-700">Correct!</p>
            </div>
+         )}
+         {feedback && (
+           <p className={`text-sm mt-2 font-medium ${feedback.isCorrect ? 'text-green-600' : 'text-amber-600'}`}>
+             {feedback.message}
+           </p>
          )}
       </div>
 
