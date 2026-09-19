@@ -128,5 +128,20 @@ export const GameRegistry: GameDefinition[] = [
     poster: favoriteSongPoster,
     estimatedDuration: '2 min',
     instructions: 'Listen to the audio clip and tell us what song it is.'
+  },
+  {
+    id: 'historical-journey',
+    name: 'Historical Journey',
+    titleKey: 'game.historicalJourney.title',
+    descriptionKey: 'game.historicalJourney.description',
+    instructionsKey: 'game.historicalJourney.instructions',
+    category: 'personalized',
+    domain: 'personal_history',
+    description: 'Watch animated historical stories and answer questions.',
+    baseDifficulty: 2,
+    icon: 'Play',
+    poster: memoryMomentsPoster, // reusing an existing poster for now
+    estimatedDuration: '3 min',
+    instructions: 'Watch the animated video, then tell us what happened.'
   }
 ];

@@ -14,32 +14,54 @@ class SpeechSynthesisServiceClass {
   /**
    * Speaks the provided text if voice mode is enabled and the browser supports it.
    */
-  public speak(text: string) {
-    if (!this.isSupportedBrowser) return;
-    
-    // Only speak if the patient has Voice Mode explicitly enabled
-    if (!LanguageService.isVoiceModeEnabled()) {
-      return;
-    }
+  public speak(text: string): Promise<void> {
+    return new Promise((resolve) => {
+      if (!this.isSupportedBrowser || !LanguageService.isVoiceModeEnabled()) {
+        resolve();
+        return;
+      }
 
-    // Cancel any ongoing speech
-    window.speechSynthesis.cancel();
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      
+      const currentLangCode = LanguageService.getCurrentLanguageCode();
+      let targetLang = 'en-US';
+      if (currentLangCode === 'hi') targetLang = 'hi-IN';
+      if (currentLangCode === 'as') targetLang = 'as-IN';
+      if (currentLangCode === 'mr') targetLang = 'mr-IN';
+      
+      utterance.lang = targetLang;
 
-    const utterance = new SpeechSynthesisUtterance(text);
-    
-    const currentLangCode = LanguageService.getCurrentLanguageCode();
-    
-    // Map to BCP-47 for speech synthesis
-    if (currentLangCode === 'en') utterance.lang = 'en-US';
-    if (currentLangCode === 'hi') utterance.lang = 'hi-IN';
-    if (currentLangCode === 'as') utterance.lang = 'as-IN';
-    if (currentLangCode === 'mr') utterance.lang = 'mr-IN';
+      const voices = window.speechSynthesis.getVoices();
+      if (voices.length > 0) {
+        let bestVoice = voices.find(v => v.lang === targetLang || v.lang.startsWith(targetLang.split('-')[0]));
+        if (!bestVoice && (currentLangCode === 'mr' || currentLangCode === 'as' || currentLangCode === 'hi')) {
+          bestVoice = voices.find(v => v.lang === 'hi-IN' || v.lang.startsWith('hi'));
+        }
+        if (!bestVoice) {
+          bestVoice = voices.find(v => v.lang === 'en-US') || voices[0];
+        }
+        if (bestVoice) {
+          utterance.voice = bestVoice;
+        }
+      }
 
-    // Adjust for elderly users: slightly slower, clear pitch
-    utterance.rate = 0.9;
-    utterance.pitch = 1.0;
+      (window as any)._currentUtterance = utterance;
+      utterance.rate = 0.9;
+      utterance.pitch = 1.0;
 
-    window.speechSynthesis.speak(utterance);
+      utterance.onend = () => {
+        resolve();
+      };
+      utterance.onerror = () => {
+        resolve(); // Continue gracefully
+      };
+
+      window.speechSynthesis.speak(utterance);
+      
+      // Fallback just in case onend never fires (known bug in some browsers)
+      setTimeout(resolve, Math.max(3000, text.length * 100 + 1000));
+    });
   }
 
   public stop() {

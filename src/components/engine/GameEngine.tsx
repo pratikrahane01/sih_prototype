@@ -15,6 +15,7 @@ import { WhoIsThisGame } from './games/WhoIsThisGame';
 import { MemoryMomentsGame } from './games/MemoryMomentsGame';
 import { LifeStoryGame } from './games/LifeStoryGame';
 import { FavoriteSongGame } from './games/FavoriteSongGame';
+import { HistoryGame } from './games/HistoryGame';
 import { GameResult } from './GameResult';
 
 interface Props {
@@ -120,6 +121,7 @@ export const GameEngine: React.FC<Props> = ({ game, difficulty }) => {
       case 'personal_memory': return <MemoryMomentsGame {...commonProps} />;
       case 'personal_timeline': return <LifeStoryGame {...commonProps} />;
       case 'personal_song': return <FavoriteSongGame {...commonProps} />;
+      case 'personal_history': return <HistoryGame {...commonProps} />;
       default: return <div className="p-8 text-red-500">Unknown game domain: {game.domain}</div>;
     }
   };

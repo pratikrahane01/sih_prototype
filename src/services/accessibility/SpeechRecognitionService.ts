@@ -5,6 +5,7 @@ export type SpeechRecognitionState = 'IDLE' | 'LISTENING' | 'PROCESSING' | 'ERRO
 class SpeechRecognitionServiceClass {
   private recognition: any = null;
   private isSupportedBrowser = false;
+  private intentionalStop = false;
 
   constructor() {
     this.init();
@@ -16,8 +17,8 @@ class SpeechRecognitionServiceClass {
     if (SpeechRecognition) {
       this.isSupportedBrowser = true;
       this.recognition = new SpeechRecognition();
-      this.recognition.continuous = false; // Stop listening after one phrase
-      this.recognition.interimResults = false;
+      this.recognition.continuous = true; // Keep listening for partial phrases
+      this.recognition.interimResults = true;
     }
   }
 
@@ -26,14 +27,17 @@ class SpeechRecognitionServiceClass {
   }
 
   /**
-   * Starts listening for speech.
-   * Resolves with the transcribed text, or rejects with an error.
+   * Starts listening for speech in real-time.
    */
-  public startListening(onStateChange: (state: SpeechRecognitionState) => void): Promise<string> {
-    return new Promise((resolve, reject) => {
+  public startListening(
+    onStateChange: (state: SpeechRecognitionState) => void,
+    onResult: (transcript: string, isFinal: boolean) => void,
+    onError: (err: Error) => void
+  ): void {
+      this.intentionalStop = false;
       if (!this.isSupportedBrowser || !this.recognition) {
         onStateChange('UNSUPPORTED');
-        reject(new Error("Voice input is not supported on this device."));
+        onError(new Error("Voice input is not supported on this device."));
         return;
       }
 
@@ -43,7 +47,8 @@ class SpeechRecognitionServiceClass {
       // Standard BCP-47 language tags for the speech recognition engine
       let bcp47 = 'en-US';
       if (currentLangCode === 'hi') bcp47 = 'hi-IN';
-      if (currentLangCode === 'as') bcp47 = 'as-IN'; // If the browser supports Assamese
+      if (currentLangCode === 'as') bcp47 = 'as-IN';
+      if (currentLangCode === 'mr') bcp47 = 'mr-IN';
       
       this.recognition.lang = bcp47;
 
@@ -53,40 +58,56 @@ class SpeechRecognitionServiceClass {
 
       this.recognition.onresult = (event: any) => {
         onStateChange('PROCESSING');
-        const transcript = event.results[0][0].transcript;
-        resolve(transcript);
+        let finalTranscript = '';
+        let interimTranscript = '';
+
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) {
+            finalTranscript += event.results[i][0].transcript;
+          } else {
+            interimTranscript += event.results[i][0].transcript;
+          }
+        }
+        
+        const isFinal = finalTranscript.length > 0;
+        const transcript = isFinal ? finalTranscript : interimTranscript;
+        
+        if (transcript.trim().length > 0) {
+          onResult(transcript, isFinal);
+        }
       };
 
       this.recognition.onerror = (event: any) => {
-        if (event.error === 'no-speech') {
-          // Soft error
+        if (event.error === 'not-allowed') {
+          this.intentionalStop = true;
           onStateChange('ERROR');
-          reject(new Error("I didn't hear anything. Please try again."));
-        } else if (event.error === 'not-allowed') {
+          onError(new Error("Microphone access is needed for voice input."));
+        } else if (event.error !== 'no-speech' && event.error !== 'audio-capture') {
+          this.intentionalStop = true;
           onStateChange('ERROR');
-          reject(new Error("Microphone access is needed for voice input. You can continue using text."));
-        } else {
-          onStateChange('ERROR');
-          reject(new Error("Speech recognition error."));
+          onError(new Error("Speech recognition error."));
         }
       };
 
       this.recognition.onend = () => {
-        // If it ended without results or error, we usually go back to idle.
-        // The promise should have already resolved or rejected.
+        if (!this.intentionalStop) {
+          try {
+            this.recognition.start();
+          } catch (e) {
+            // Ignore if already started
+          }
+        }
       };
 
       try {
         this.recognition.start();
-      } catch (err) {
-        // Handle cases where start() is called while already started
-        onStateChange('ERROR');
-        reject(err);
+      } catch (err: any) {
+        // Ignore if already started
       }
-    });
   }
 
   public stopListening() {
+    this.intentionalStop = true;
     if (this.recognition) {
       this.recognition.stop();
     }

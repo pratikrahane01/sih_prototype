@@ -72,9 +72,10 @@ const PatientLayout: React.FC = () => {
               onChange={handleLanguageChange}
               className="bg-white/20 text-white border border-white/30 rounded-lg px-2 py-1 text-sm outline-none cursor-pointer hidden sm:block"
             >
-              <option value="en" className="text-black">EN</option>
-              <option value="as" className="text-black">অসমীয়া</option>
-              <option value="mr" className="text-black">मराठी</option>
+              <option value="as" className="text-black">অসমীয়া (AS)</option>
+              <option value="mr" className="text-black">मराठी (MR)</option>
+              <option value="hi" className="text-black">हिन्दी (HI)</option>
+              <option value="en" className="text-black">English (EN)</option>
             </select>
 
             {isOffline && (

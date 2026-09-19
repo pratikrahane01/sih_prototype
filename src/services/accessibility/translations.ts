@@ -1,5 +1,16 @@
 export const translations: Record<string, Record<string, string>> = {
   en: {
+
+    "game.playing_song": "Playing a song...",
+    "game.listening_answer": "Listening to your answer...",
+    "game.speak_now": "Speak now",
+    "game.thinking": "Thinking...",
+    "game.voice_unavailable": "Voice input unavailable. Please tap an answer below.",
+    "game.ready_play": "Ready to play?",
+    "game.listen_guess": "Listen to the song and guess who sang it or which movie it is from.",
+    "game.question_x": "Question",
+    "game.of_y": "of",
+
     // Navigation
     "navigation.home": "Home",
     "navigation.activities": "Activities",
@@ -40,6 +51,9 @@ export const translations: Record<string, Record<string, string>> = {
     "game.favoriteSong.title": "My Favorite Song",
     "game.favoriteSong.description": "Recognize music that is important to you.",
     "game.favoriteSong.instructions": "Listen to the audio clip and tell us what song it is.",
+    "game.historicalJourney.title": "Historical Journey",
+    "game.historicalJourney.description": "Watch animated historical stories and answer questions.",
+    "game.historicalJourney.instructions": "Watch the animated video, then tell us what happened.",
 
     // Cognitive Games
     "game.memoryMatch.title": "Memory Match",
@@ -223,6 +237,17 @@ export const translations: Record<string, Record<string, string>> = {
     },
   
   hi: {
+
+    "game.playing_song": "गाना बज रहा है...",
+    "game.listening_answer": "आपका उत्तर सुन रहा हूँ...",
+    "game.speak_now": "अब बोलें",
+    "game.thinking": "सोच रहा हूँ...",
+    "game.voice_unavailable": "वॉयस इनपुट उपलब्ध नहीं है। कृपया नीचे एक उत्तर पर टैप करें।",
+    "game.ready_play": "खेलने के लिए तैयार हैं?",
+    "game.listen_guess": "गाना सुनें और पहचानें कि इसे किसने गाया है या यह किस फिल्म का है।",
+    "game.question_x": "प्रश्न",
+    "game.of_y": "में से",
+
     // Navigation
     "navigation.home": "होम",
     "navigation.activities": "गतिविधियाँ",
@@ -263,6 +288,9 @@ export const translations: Record<string, Record<string, string>> = {
     "game.favoriteSong.title": "मेरा पसंदीदा गाना",
     "game.favoriteSong.description": "उस संगीत को पहचानें जो आपके लिए महत्वपूर्ण है।",
     "game.favoriteSong.instructions": "ऑडियो क्लिप सुनें और बताएं कि यह कौन सा गाना है।",
+    "game.historicalJourney.title": "ऐतिहासिक यात्रा",
+    "game.historicalJourney.description": "एनिमेटेड ऐतिहासिक कहानियां देखें और प्रश्नों के उत्तर दें।",
+    "game.historicalJourney.instructions": "एनिमेटेड वीडियो देखें, फिर बताएं कि क्या हुआ था।",
 
     // Cognitive Games
     "game.memoryMatch.title": "मेमोरी मैच",
@@ -446,6 +474,17 @@ export const translations: Record<string, Record<string, string>> = {
     },
   
   as: {
+
+    "game.playing_song": "এটা গান বাজি আছে...",
+    "game.listening_answer": "আপোনাৰ উত্তৰ শুনি আছো...",
+    "game.speak_now": "এতিয়া কওক",
+    "game.thinking": "ভাবি আছো...",
+    "game.voice_unavailable": "ভইচ ইনপুট উপলব্ধ নহয়। অনুগ্ৰহ কৰি তলৰ উত্তৰ এটাত টিপক।",
+    "game.ready_play": "খেলিবলৈ সাজুনে?",
+    "game.listen_guess": "গানটো শুনক আৰু কোনে গাইছে বা কোনখন ছৱিৰ পৰা লোৱা হৈছে অনুমান কৰক।",
+    "game.question_x": "প্ৰশ্ন",
+    "game.of_y": "ৰ ভিতৰত",
+
     // Navigation
     "navigation.home": "মূল পৃষ্ঠা",
     "navigation.activities": "কাৰ্যকলাপ",
@@ -486,6 +525,9 @@ export const translations: Record<string, Record<string, string>> = {
     "game.favoriteSong.title": "মোৰ প্ৰিয় গান",
     "game.favoriteSong.description": "আপোনাৰ বাবে গুৰুত্বপূৰ্ণ সংগীত চিনাক্ত কৰক।",
     "game.favoriteSong.instructions": "অডিঅ' ক্লিপটো শুনক আৰু আমাক কওক যে এইটো কি গান।",
+    "game.historicalJourney.title": "ঐতিহাসিক যাত্ৰা",
+    "game.historicalJourney.description": "এনিমেটেড ঐতিহাসিক গল্পসমূহ চাওক আৰু প্ৰশ্নৰ উত্তৰ দিয়ক।",
+    "game.historicalJourney.instructions": "এনিমেটেড ভিডিঅ'টো চাওক, তাৰ পিছত কি ঘটিল কওক।",
 
     // Cognitive Games
     "game.memoryMatch.title": "মেম'ৰী মেচ",
@@ -669,6 +711,17 @@ export const translations: Record<string, Record<string, string>> = {
     },
   
   mr: {
+
+    "game.playing_song": "गाणे वाजत आहे...",
+    "game.listening_answer": "तुमचे उत्तर ऐकत आहे...",
+    "game.speak_now": "आता बोला",
+    "game.thinking": "विचार करत आहे...",
+    "game.voice_unavailable": "आवाज इनपुट उपलब्ध नाही. कृपया खालील उत्तरावर टॅप करा.",
+    "game.ready_play": "खेळण्यासाठी तयार आहात?",
+    "game.listen_guess": "गाणे ऐका आणि ते कोणी गायले आहे किंवा ते कोणत्या चित्रपटातील आहे ते ओळखा.",
+    "game.question_x": "प्रश्न",
+    "game.of_y": "पैकी",
+
     // Navigation
     "navigation.home": "मुख्यपृष्ठ",
     "navigation.activities": "उपक्रम",
@@ -709,6 +762,9 @@ export const translations: Record<string, Record<string, string>> = {
     "game.favoriteSong.title": "माझे आवडते गाणे",
     "game.favoriteSong.description": "तुमच्यासाठी महत्त्वाचे असलेले संगीत ओळखा.",
     "game.favoriteSong.instructions": "ऑडिओ क्लिप ऐका आणि हे कोणते गाणे आहे ते आम्हाला सांगा.",
+    "game.historicalJourney.title": "ऐतिहासिक प्रवास",
+    "game.historicalJourney.description": "अॅनिमेटेड ऐतिहासिक कथा पहा आणि प्रश्नांची उत्तरे द्या.",
+    "game.historicalJourney.instructions": "अॅनिमेटेड व्हिडिओ पहा, नंतर काय झाले ते सांगा.",
 
     // Cognitive Games
     "game.memoryMatch.title": "मेमरी मॅच",

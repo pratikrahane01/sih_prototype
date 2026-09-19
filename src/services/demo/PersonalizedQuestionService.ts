@@ -85,6 +85,9 @@ export interface PersonQuestion {
   questionText: string;
   options: string[];
   correctAnswer: string;
+  voiceQuestion: string;
+  voiceHint: string;
+  keywords: string[];
 }
 
 export interface MomentQuestion {
@@ -156,12 +159,34 @@ export function generateWhoIsThisQuestions(
       3
     );
 
+    const lang = LanguageService.getCurrentLanguageCode();
+    
+    let voiceQuestion = askName ? "Who is this person?" : "What is your relationship with this person?";
+    let voiceHint = askName ? `Their name starts with ${correctAnswer.charAt(0)}.` : `They are your ${correctAnswer}.`;
+    
+    if (lang === 'mr') {
+      voiceQuestion = askName ? "ही व्यक्ती कोण आहे?" : "या व्यक्तीसोबत तुमचे नाते काय आहे?";
+      voiceHint = askName ? `त्यांचे नाव ${correctAnswer.charAt(0)} या अक्षराने सुरू होते.` : `ते तुमचे ${correctAnswer} आहेत.`;
+    } else if (lang === 'hi') {
+      voiceQuestion = askName ? "यह व्यक्ति कौन है?" : "इस व्यक्ति के साथ आपका क्या रिश्ता है?";
+      voiceHint = askName ? `इनका नाम ${correctAnswer.charAt(0)} से शुरू होता है।` : `वे आपके ${correctAnswer} हैं।`;
+    } else if (lang === 'as') {
+      voiceQuestion = askName ? "এই ব্যক্তিজন কোন?" : "এই ব্যক্তিজনৰ সৈতে আপোনাৰ সম্পৰ্ক কি?";
+      voiceHint = askName ? `তেওঁলোকৰ নাম ${correctAnswer.charAt(0)} ৰে আৰম্ভ হয়।` : `তেওঁলোক আপোনাৰ ${correctAnswer} হয়।`;
+    }
+
+    const keywords = correctAnswer.toLowerCase().replace(/[^\\p{L}\\p{N} ]/gu, '').split(' ').filter((w: string) => w.length > 2);
+    keywords.push(correctAnswer.toLowerCase());
+
     return {
       person,
       questionType: askName ? 'name' : 'relationship',
       questionText,
       options: shuffle([correctAnswer, ...distractors]),
-      correctAnswer
+      correctAnswer,
+      voiceQuestion,
+      voiceHint,
+      keywords
     };
   });
 }
@@ -390,4 +415,77 @@ export function generateFavoriteSongQuestions(
       keywords
     };
   });
+}
+
+/**
+ * GAME 5: "Historical Journey"
+ * Asks questions based on an embedded historical animated video.
+ */
+export function generateHistoryQuestions(): HistoryQuestion[] {
+  const lang = LanguageService.getCurrentLanguageCode();
+
+  const q1Correct = getLocalText("Wagh Nakh");
+  const q1Distractors = ["Sword", "Spear", "Dagger"].map(getLocalText);
+  
+  let q1Voice = "Can you tell me the name of the weapon?";
+  let q1Hint = "It is named after a tiger's claws.";
+  if (lang === 'mr') {
+    q1Voice = "तुम्ही मला या शस्त्राचे नाव सांगू शकता का?";
+    q1Hint = "याचे नाव वाघाच्या नखांवरून ठेवले आहे.";
+  } else if (lang === 'hi') {
+    q1Voice = "क्या आप मुझे इस हथियार का नाम बता सकते हैं?";
+    q1Hint = "इसका नाम बाघ के नाखूनों पर रखा गया है।";
+  } else if (lang === 'as') {
+    q1Voice = "আপুনি মোক এই অস্ত্ৰটোৰ নাম ক'ব পাৰিবনে?";
+    q1Hint = "ইয়াৰ নাম বাঘৰ নখৰ ওপৰত ৰখা হৈছে।";
+  }
+
+  const q1Keywords = q1Correct.toLowerCase().replace(/[^\\p{L}\\p{N} ]/gu, '').split(' ').filter((w: string) => w.length > 2);
+  q1Keywords.push(q1Correct.toLowerCase());
+
+  const q2Correct = getLocalText("Maratha Empire");
+  const q2Distractors = ["Mughal Empire", "Maurya Empire", "Gupta Empire"].map(getLocalText);
+
+  let q2Voice = "Which empire did he establish?";
+  let q2Hint = "It was a major power in India that began in Maharashtra.";
+  if (lang === 'mr') {
+    q2Voice = "त्याने कोणते साम्राज्य स्थापन केले?";
+    q2Hint = "ही भारतातील एक प्रमुख सत्ता होती जिची सुरुवात महाराष्ट्रात झाली.";
+  } else if (lang === 'hi') {
+    q2Voice = "उसने किस साम्राज्य की स्थापना की?";
+    q2Hint = "यह भारत में एक प्रमुख शक्ति थी जिसकी शुरुआत महाराष्ट्र में हुई थी।";
+  } else if (lang === 'as') {
+    q2Voice = "তেওঁ কোনটো সাম্ৰাজ্য প্ৰতিষ্ঠা কৰিছিল?";
+    q2Hint = "মহাৰাষ্ট্ৰত আৰম্ভ হোৱা ই ভাৰতৰ এক প্ৰধান শক্তি আছিল।";
+  }
+
+  const q2Keywords = q2Correct.toLowerCase().replace(/[^\\p{L}\\p{N} ]/gu, '').split(' ').filter((w: string) => w.length > 2);
+  q2Keywords.push(q2Correct.toLowerCase());
+
+  return [
+    {
+      id: "history_q1",
+      questionText: lang === 'mr' ? "शिवाजी महाराजांनी अफजल खानाचा पराभव करण्यासाठी कोणत्या शस्त्राचा वापर केला?"
+                  : lang === 'hi' ? "शिवाजी महाराज ने अफजल खान को हराने के लिए किस हथियार का इस्तेमाल किया था?"
+                  : lang === 'as' ? "শিৱাজী মহাৰাজে আফজল খানক পৰাস্ত কৰিবলৈ কোনটো অস্ত্ৰ ব্যৱহাৰ কৰিছিল?"
+                  : "Which weapon did Shivaji Maharaj use to defeat Afzal Khan?",
+      correctAnswer: q1Correct,
+      options: shuffle([...q1Distractors, q1Correct]),
+      voiceQuestion: q1Voice,
+      voiceHint: q1Hint,
+      keywords: q1Keywords
+    },
+    {
+      id: "history_q2",
+      questionText: lang === 'mr' ? "शिवाजी महाराजांनी कोणते साम्राज्य स्थापन केले?"
+                  : lang === 'hi' ? "शिवाजी महाराज ने किस साम्राज्य की स्थापना की?"
+                  : lang === 'as' ? "শিৱাজী মহাৰাজে কোনটো সাম্ৰাজ্য প্ৰতিষ্ঠা কৰিছিল?"
+                  : "Which empire did Shivaji Maharaj establish?",
+      correctAnswer: q2Correct,
+      options: shuffle([...q2Distractors, q2Correct]),
+      voiceQuestion: q2Voice,
+      voiceHint: q2Hint,
+      keywords: q2Keywords
+    }
+  ];
 }

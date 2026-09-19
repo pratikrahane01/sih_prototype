@@ -155,7 +155,7 @@ class LanguageServiceClass {
 
   public getCurrentLanguageCode(): SupportedLanguageCode {
     const profile = PatientService.getProfile();
-    return (profile?.language as SupportedLanguageCode) || 'en';
+    return (profile?.language as SupportedLanguageCode) || 'as';
   }
 
   public getLanguageConfig(code: SupportedLanguageCode): SupportedLanguage | undefined {
@@ -163,8 +163,7 @@ class LanguageServiceClass {
   }
 
   public isVoiceModeEnabled(): boolean {
-    const profile = PatientService.getProfile();
-    return !!profile?.voiceMode;
+    return true;
   }
 
   public setLanguage(code: SupportedLanguageCode) {

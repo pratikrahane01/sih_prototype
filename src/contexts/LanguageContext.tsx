@@ -12,7 +12,7 @@ interface LanguageContextProps {
 const LanguageContext = createContext<LanguageContextProps | undefined>(undefined);
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [language, setLanguageState] = useState<SupportedLanguageCode>('en');
+  const [language, setLanguageState] = useState<SupportedLanguageCode>('as');
 
   useEffect(() => {
     // Initialize from PatientService / LocalStorage
