@@ -11,11 +11,12 @@ import { SpeechSynthesisService } from '../../../services/accessibility/SpeechSy
 import { SpeechRecognitionService, type SpeechRecognitionState } from '../../../services/accessibility/SpeechRecognitionService';
 import { LanguageService } from '../../../services/accessibility/LanguageService';
 import { generateWhoIsThisQuestions, type PersonQuestion } from '../../../services/demo/PersonalizedQuestionService';
+import { WhoIsThisAnswerEvaluator } from '../../../services/engine/WhoIsThisAnswerEvaluator';
 import { DEMO_PATIENT_ID } from '../../../services/demo/DemoMemoryData';
 import { Volume2, Users, CheckCircle, XCircle, Mic, MicOff } from 'lucide-react';
 import { useLanguage } from '../../../contexts/LanguageContext';
 
-type GameState = 'LOADING' | 'READY' | 'ASKING_QUESTION' | 'LISTENING' | 'HINTING' | 'EVALUATING' | 'WAITING_MANUAL_INPUT' | 'SUCCESS';
+type GameState = 'LOADING' | 'READY' | 'ASKING_QUESTION' | 'LISTENING' | 'HINTING' | 'EVALUATING' | 'WAITING_MANUAL_INPUT' | 'SUCCESS' | 'UNCERTAIN';
 
 const LABELS = ['A', 'B', 'C', 'D'];
 
@@ -45,7 +46,7 @@ export const WhoIsThisGame: React.FC<Props> = ({ difficulty, onComplete }) => {
   const scoreRef    = useRef(0);
   const mistakesRef = useRef(0);
   const hintsRef    = useRef(0);
-  const timeoutRef  = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<any>(null);
   const questionsRef = useRef<PersonQuestion[]>([]);
   
   const { t } = useLanguage();
@@ -105,24 +106,30 @@ export const WhoIsThisGame: React.FC<Props> = ({ difficulty, onComplete }) => {
     );
   };
 
-  const evaluateAnswer = (spokenText: string, isFinal: boolean, q: PersonQuestion) => {
-    const lowerText = spokenText.toLowerCase();
-    
-    if (lowerText.includes("don't know") || lowerText.includes("mahit nahi") || lowerText.includes("no idea")) {
-       SpeechRecognitionService.stopListening();
-       setGameState('EVALUATING');
-       provideHint(q);
-       return;
-    }
+  const evaluateAnswer = async (spokenText: string, isFinal: boolean, q: PersonQuestion) => {
+    // DO NOT evaluate interim results, only final transcripts as per requirement.
+    if (!isFinal) return;
 
-    const isMatch = q.keywords.some(kw => lowerText.includes(kw));
+    SpeechRecognitionService.stopListening();
+    setGameState('EVALUATING');
     
-    if (isMatch) {
-       SpeechRecognitionService.stopListening();
-       setGameState('EVALUATING');
+    const lang = LanguageService.getCurrentLanguageCode();
+    const result = WhoIsThisAnswerEvaluator.evaluate(spokenText, q.person, lang);
+    
+    if (result.result === 'CORRECT') {
        handleSuccess(q, q.correctAnswer);
-    } else if (isFinal) {
-       setGameState('EVALUATING');
+    } else if (result.result === 'UNCERTAIN') {
+       setGameState('UNCERTAIN');
+       let uncertainMsg = "That's okay. Take another look.";
+       if (lang === 'mr') uncertainMsg = "ठीक आहे. पुन्हा एकदा पहा.";
+       else if (lang === 'hi') uncertainMsg = "कोई बात नहीं। एक बार फिर से देखें।";
+       else if (lang === 'as') uncertainMsg = "ঠিকাছে। আকৌ এবাৰ চাওক।";
+       
+       setFeedback({ message: uncertainMsg, isCorrect: false });
+       await SpeechSynthesisService.speak(uncertainMsg);
+       setFeedback(null);
+       startListening(q);
+    } else {
        mistakesRef.current += 1;
        provideHint(q);
     }
@@ -132,11 +139,11 @@ export const WhoIsThisGame: React.FC<Props> = ({ difficulty, onComplete }) => {
     setGameState('HINTING');
     hintsRef.current += 1;
     
-    let wrongMsg = "That's not quite right. Here is a hint: ";
+    let wrongMsg = "That's alright. Let's try again. Hint: ";
     const lang = LanguageService.getCurrentLanguageCode();
-    if (lang === 'mr') wrongMsg = "ते बरोबर नाही. येथे एक सूचना आहे: ";
-    else if (lang === 'hi') wrongMsg = "यह सही नहीं है। यहाँ एक संकेत है: ";
-    else if (lang === 'as') wrongMsg = "সেইটো সম্পূৰ্ণ শুদ্ধ নহয়। ইয়াত এটা ইংগিত দিয়া হৈছে: ";
+    if (lang === 'mr') wrongMsg = "काही हरकत नाही. आपण पुन्हा प्रयत्न करूया. सूचना: ";
+    else if (lang === 'hi') wrongMsg = "कोई बात नहीं। चलिए फिर से प्रयास करते हैं। संकेत: ";
+    else if (lang === 'as') wrongMsg = "একো নাই। আমি আকৌ এবাৰ চেষ্টা কৰো আহক। ইংগিত: ";
     
     setFeedback({ message: "Hint: " + q.voiceHint, isCorrect: false });
     await SpeechSynthesisService.speak(wrongMsg + q.voiceHint);
@@ -155,11 +162,11 @@ export const WhoIsThisGame: React.FC<Props> = ({ difficulty, onComplete }) => {
 
     setFeedback({ message: t('game.correct') + `! ${q.person.name}.`, isCorrect: true });
     
-    let successMsg = "Excellent! That is correct.";
+    let successMsg = "Yes! That's right.";
     const lang = LanguageService.getCurrentLanguageCode();
-    if (lang === 'mr') successMsg = "उत्कृष्ट! ते बरोबर आहे.";
-    else if (lang === 'hi') successMsg = "उत्कृष्ट! यह सही है।";
-    else if (lang === 'as') successMsg = "সুন্দৰ! সেয়া সঁচা।";
+    if (lang === 'mr') successMsg = "होय! ते बरोबर आहे.";
+    else if (lang === 'hi') successMsg = "हाँ! यह सही है।";
+    else if (lang === 'as') successMsg = "হয়! সেয়া সঁচা।";
     
     await SpeechSynthesisService.speak(successMsg);
     
@@ -250,7 +257,7 @@ export const WhoIsThisGame: React.FC<Props> = ({ difficulty, onComplete }) => {
       {/* Question */}
       <div className="flex flex-col items-center justify-center gap-3 mb-8">
         <h3 className="text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
-          {currentQ.questionText.includes("relationship") ? t('q.relationship') : t('q.who_is_this')}
+          {currentQ.questionText}
         </h3>
         
         {/* Voice Assistant Status */}
@@ -261,16 +268,16 @@ export const WhoIsThisGame: React.FC<Props> = ({ difficulty, onComplete }) => {
               <span className="font-semibold">{t('game.listening') || "Listening..."}</span>
             </div>
           )}
-          {(gameState === 'ASKING_QUESTION' || gameState === 'HINTING') && (
+          {(gameState === 'ASKING_QUESTION' || gameState === 'HINTING' || gameState === 'UNCERTAIN') && (
             <div className="flex items-center gap-2 text-blue-600 bg-blue-50 px-4 py-2 rounded-full border border-blue-200">
               <Volume2 className="w-5 h-5 animate-pulse" />
-              <span className="font-semibold">{gameState === 'HINTING' ? "Hinting..." : "Speaking..."}</span>
+              <span className="font-semibold">{gameState === 'HINTING' ? "Hinting..." : gameState === 'UNCERTAIN' ? "Encouraging..." : "Speaking..."}</span>
             </div>
           )}
           {gameState === 'WAITING_MANUAL_INPUT' && (
             <div className="flex items-center gap-2 text-gray-500 bg-gray-100 px-4 py-2 rounded-full">
               <MicOff className="w-5 h-5" />
-              <span className="font-medium text-sm">Voice unavailable. Please tap an answer.</span>
+              <span className="font-medium text-sm">Voice input is not available on this device. You can still choose an answer.</span>
             </div>
           )}
         </div>
@@ -338,7 +345,7 @@ export const WhoIsThisGame: React.FC<Props> = ({ difficulty, onComplete }) => {
               <span className="shrink-0 w-9 h-9 rounded-full bg-primary-teal/10 text-primary-teal font-black text-lg flex items-center justify-center">
                 {LABELS[i]}
               </span>
-              <span className="text-gray-800">{t(`relationship.${opt.toLowerCase()}`, opt)}</span>
+              <span className="text-gray-800">{t(`relationship.${opt.toLowerCase()}`, LanguageService.getLocalName(opt))}</span>
             </button>
           );
         })}

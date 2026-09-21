@@ -6,6 +6,9 @@ class SpeechRecognitionServiceClass {
   private recognition: any = null;
   private isSupportedBrowser = false;
   private intentionalStop = false;
+  private fullFinalTranscript = '';
+  private lastInterimTranscript = '';
+  private SpeechRecognitionConstructor: any = null;
 
   constructor() {
     this.init();
@@ -13,17 +16,27 @@ class SpeechRecognitionServiceClass {
 
   private init() {
     // Check for browser support
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (SpeechRecognition) {
+    this.SpeechRecognitionConstructor = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (this.SpeechRecognitionConstructor) {
       this.isSupportedBrowser = true;
-      this.recognition = new SpeechRecognition();
-      this.recognition.continuous = true; // Keep listening for partial phrases
-      this.recognition.interimResults = true;
+      console.log("[Diagnostics] SpeechRecognition: Browser supports SpeechRecognition API.");
+    } else {
+      console.warn("[Diagnostics] SpeechRecognition: Browser DOES NOT support SpeechRecognition API.");
     }
   }
 
   public isSupported(): boolean {
     return this.isSupportedBrowser;
+  }
+
+  private resolveSpeechLocale(langCode: string): string {
+    switch (langCode) {
+      case 'as': return 'hi-IN'; // Fallback to Hindi STT for Assamese to guarantee mic opens
+      case 'mr': return 'mr-IN';
+      case 'hi': return 'hi-IN';
+      case 'en': return 'en-IN';
+      default: return 'en-US';
+    }
   }
 
   /**
@@ -35,22 +48,32 @@ class SpeechRecognitionServiceClass {
     onError: (err: Error) => void
   ): void {
       this.intentionalStop = false;
-      if (!this.isSupportedBrowser || !this.recognition) {
+      this.fullFinalTranscript = '';
+      this.lastInterimTranscript = '';
+
+      if (!this.isSupportedBrowser || !this.SpeechRecognitionConstructor) {
+        console.warn("[Diagnostics] SpeechRecognition: Cannot start listening. Unsupported.");
         onStateChange('UNSUPPORTED');
         onError(new Error("Voice input is not supported on this device."));
         return;
       }
 
+      // Always recreate the recognition instance to guarantee language switches take effect
+      if (this.recognition) {
+        try {
+          this.recognition.stop();
+        } catch (e) {}
+      }
+      this.recognition = new this.SpeechRecognitionConstructor();
+      this.recognition.continuous = false; // Auto-stop on silence to trigger onend
+      this.recognition.interimResults = true;
+
       // Configure language based on the user's current profile
       const currentLangCode = LanguageService.getCurrentLanguageCode();
+      const resolvedLocale = this.resolveSpeechLocale(currentLangCode);
       
-      // Standard BCP-47 language tags for the speech recognition engine
-      let bcp47 = 'en-US';
-      if (currentLangCode === 'hi') bcp47 = 'hi-IN';
-      if (currentLangCode === 'as') bcp47 = 'as-IN';
-      if (currentLangCode === 'mr') bcp47 = 'mr-IN';
-      
-      this.recognition.lang = bcp47;
+      console.log(`[Diagnostics] SpeechRecognition: Starting engine. UI Lang: ${currentLangCode} -> Locale: ${resolvedLocale}`);
+      this.recognition.lang = resolvedLocale;
 
       this.recognition.onstart = () => {
         onStateChange('LISTENING');
@@ -58,22 +81,25 @@ class SpeechRecognitionServiceClass {
 
       this.recognition.onresult = (event: any) => {
         onStateChange('PROCESSING');
-        let finalTranscript = '';
-        let interimTranscript = '';
+        let currentFinal = '';
+        let currentInterim = '';
 
-        for (let i = event.resultIndex; i < event.results.length; ++i) {
+        for (let i = 0; i < event.results.length; ++i) {
           if (event.results[i].isFinal) {
-            finalTranscript += event.results[i][0].transcript;
+            currentFinal += event.results[i][0].transcript;
           } else {
-            interimTranscript += event.results[i][0].transcript;
+            currentInterim += event.results[i][0].transcript;
           }
         }
         
-        const isFinal = finalTranscript.length > 0;
-        const transcript = isFinal ? finalTranscript : interimTranscript;
+        this.fullFinalTranscript = currentFinal;
         
-        if (transcript.trim().length > 0) {
-          onResult(transcript, isFinal);
+        const displayTranscript = currentFinal + currentInterim;
+        this.lastInterimTranscript = displayTranscript;
+
+        if (displayTranscript.trim().length > 0) {
+          // Fire interim result so the UI updates
+          onResult(displayTranscript, false);
         }
       };
 
@@ -82,14 +108,29 @@ class SpeechRecognitionServiceClass {
           this.intentionalStop = true;
           onStateChange('ERROR');
           onError(new Error("Microphone access is needed for voice input."));
-        } else if (event.error !== 'no-speech' && event.error !== 'audio-capture') {
+        } else if (event.error !== 'no-speech' && event.error !== 'audio-capture' && event.error !== 'aborted') {
+          console.error(`[Diagnostics] SpeechRecognition Error: ${event.error}. Locale: ${resolvedLocale}`);
           this.intentionalStop = true;
           onStateChange('ERROR');
-          onError(new Error("Speech recognition error."));
+          onError(new Error(`Speech recognition error: ${event.error}`));
         }
       };
 
       this.recognition.onend = () => {
+        let finalTrimmed = this.fullFinalTranscript.trim();
+        if (finalTrimmed.length === 0) {
+          finalTrimmed = this.lastInterimTranscript.trim();
+        }
+        
+        if (finalTrimmed.length > 0) {
+          console.log(`[Diagnostics] SpeechRecognition: Session ended. Final accumulated transcript: "${finalTrimmed}"`);
+          // Send the complete transcript to the evaluator
+          onResult(finalTrimmed, true);
+        }
+
+        // Only restart if we haven't intentionally stopped AND we didn't just capture a final sentence.
+        // Wait, if we captured a final sentence, `onResult(..., true)` will synchronously trigger `stopListening`
+        // which sets `intentionalStop = true`. So this logic holds perfectly.
         if (!this.intentionalStop) {
           try {
             this.recognition.start();

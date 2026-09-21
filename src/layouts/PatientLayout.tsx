@@ -5,7 +5,7 @@ import { PatientService } from '../services/api/PatientService';
 import { useOfflineStatus } from '../hooks/useOfflineStatus';
 import type { SupportedLanguageCode } from '../types';
 import { useLanguage } from '../contexts/LanguageContext';
-
+import { PatientVoiceAssistant } from '../components/assistant/PatientVoiceAssistant';
 const PatientLayout: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -23,7 +23,7 @@ const PatientLayout: React.FC = () => {
     return (
       <div className="min-h-screen bg-background-warm flex flex-col items-center justify-center p-8 text-center">
         <Brain className="w-16 h-16 text-primary-teal mb-6" />
-        <h1 className="text-3xl font-bold text-primary-teal mb-4">Welcome to Calm Intelligence</h1>
+        <h1 className="text-3xl font-bold text-primary-teal mb-4">Welcome to Smaran Sarathii</h1>
         <p className="text-xl text-text-charcoal/70 mb-8 max-w-md">
           Let's set up your personal profile to get started.
         </p>
@@ -58,7 +58,7 @@ const PatientLayout: React.FC = () => {
               <Brain className="w-8 h-8 text-white" />
             </div>
             <div className="flex flex-col">
-              <h1 className="text-xl font-bold tracking-wide leading-tight">Calm Intelligence</h1>
+              <h1 className="text-xl font-bold tracking-wide leading-tight">Smaran Sarathii</h1>
               {profile?.nickname || profile?.name ? (
                 <p className="text-sm text-white/80 font-medium">{profile.nickname || profile.name}</p>
               ) : null}
@@ -150,6 +150,9 @@ const PatientLayout: React.FC = () => {
           })}
         </div>
       </nav>
+
+      {/* Voice Assistant */}
+      <PatientVoiceAssistant />
     </div>
   );
 };

@@ -37,7 +37,7 @@ const Landing: React.FC = () => {
           <span className="text-xs font-bold tracking-widest text-primary-teal/50 uppercase">SIH 2026 · Problem Statement 26003</span>
         </div>
         <h1 className="text-4xl md:text-5xl font-bold text-primary-teal mb-4">
-          Calm Intelligence
+          Smaran Sarathii
         </h1>
         <p className="text-lg text-text-charcoal/80 mb-2 max-w-lg mx-auto">
           AI-Based Cognitive Activity and Personal Memory Assistance Platform

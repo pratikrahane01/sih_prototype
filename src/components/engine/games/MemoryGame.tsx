@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Apple, Car, Dog, Sun, Moon, Leaf, Heart, Star } from 'lucide-react';
 import { useLanguage } from '../../../contexts/LanguageContext';
+
+// Import cultural item images
+import diyaImg from '../../../assets/games/memory/item_diya.jpg';
+import lotusImg from '../../../assets/games/memory/item_lotus.jpg';
+import chaiImg from '../../../assets/games/memory/item_chai.jpg';
+import tulsiImg from '../../../assets/games/memory/item_tulsi.jpg';
+import banyanImg from '../../../assets/games/memory/item_banyan.jpg';
+import tablaImg from '../../../assets/games/memory/item_tabla.jpg';
+import rupeeImg from '../../../assets/games/memory/item_rupee.jpg';
+import peacockImg from '../../../assets/games/memory/item_peacock.jpg';
 
 interface Props {
   difficulty: number;
@@ -8,14 +17,14 @@ interface Props {
 }
 
 const ALL_ITEMS = [
-  { id: 'apple', icon: Apple },
-  { id: 'car', icon: Car },
-  { id: 'dog', icon: Dog },
-  { id: 'sun', icon: Sun },
-  { id: 'moon', icon: Moon },
-  { id: 'leaf', icon: Leaf },
-  { id: 'heart', icon: Heart },
-  { id: 'star', icon: Star },
+  { id: 'diya', icon: diyaImg },
+  { id: 'lotus', icon: lotusImg },
+  { id: 'chai', icon: chaiImg },
+  { id: 'tulsi', icon: tulsiImg },
+  { id: 'banyan', icon: banyanImg },
+  { id: 'tabla', icon: tablaImg },
+  { id: 'rupee', icon: rupeeImg },
+  { id: 'peacock', icon: peacockImg },
 ];
 
 export const MemoryGame: React.FC<Props> = ({ difficulty, onComplete }) => {
@@ -100,19 +109,16 @@ export const MemoryGame: React.FC<Props> = ({ difficulty, onComplete }) => {
     <div className="flex flex-col items-center w-full">
       {phase === 'memorize' ? (
         <>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mb-8">
-            {targets.map(t => {
-              const Icon = t.icon;
-              return (
-                <div key={t.id} className="p-8 bg-blue-50 rounded-2xl flex justify-center items-center">
-                  <Icon className="w-20 h-20 text-primary-teal" />
-                </div>
-              );
-            })}
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mb-10 w-full max-w-3xl">
+            {targets.map(t => (
+              <div key={t.id} className="p-8 bg-gradient-to-br from-blue-50 to-indigo-50/30 rounded-3xl flex justify-center items-center shadow-sm border border-blue-100/50 transform hover:scale-105 transition-transform duration-300">
+                <img src={t.icon} alt={t.id} className="w-24 h-24 object-contain drop-shadow-md rounded-xl" />
+              </div>
+            ))}
           </div>
-          <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden max-w-md">
+          <div className="w-full bg-gray-100 h-3 rounded-full overflow-hidden max-w-xl shadow-inner">
             <div 
-              className="bg-primary-teal h-full origin-left animate-[shrink_linear_forwards]" 
+              className="h-full rounded-full bg-gradient-to-r from-primary-teal to-blue-400 origin-left animate-[shrink_linear_forwards]" 
               style={{ animationDuration: `${viewDuration}ms`, animationName: 'shrinkWidth' }}
             />
           </div>
@@ -120,26 +126,31 @@ export const MemoryGame: React.FC<Props> = ({ difficulty, onComplete }) => {
         </>
       ) : (
         <>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10 w-full max-w-3xl">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12 w-full max-w-4xl">
             {options.map(opt => {
-              const Icon = opt.icon;
               const isSelected = selected.includes(opt.id);
               return (
                 <button
                   key={opt.id}
                   onClick={() => toggleSelection(opt.id)}
-                  className={`p-6 rounded-2xl flex flex-col items-center transition-all border-4 ${
-                    isSelected ? 'border-primary-teal bg-primary-teal/10' : 'border-gray-100 bg-gray-50 hover:border-gray-200'
+                  className={`p-6 rounded-3xl flex flex-col items-center transition-all duration-300 border-4 ${
+                    isSelected 
+                      ? 'border-primary-teal bg-gradient-to-b from-primary-teal/10 to-transparent shadow-md transform -translate-y-2' 
+                      : 'border-transparent bg-white shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-gray-100'
                   }`}
                 >
-                  <Icon className={`w-16 h-16 ${isSelected ? 'text-primary-teal' : 'text-text-charcoal'}`} />
+                  <img 
+                    src={opt.icon} 
+                    alt={opt.id} 
+                    className={`w-20 h-20 object-contain transition-all duration-300 rounded-xl ${isSelected ? 'drop-shadow-lg scale-110' : 'drop-shadow-sm opacity-80'}`} 
+                  />
                 </button>
               );
             })}
           </div>
           <button 
             onClick={handleSubmit}
-            className="bg-primary-teal text-white px-12 py-4 rounded-full text-2xl font-medium hover:bg-teal-700 transition"
+            className="bg-gradient-to-r from-primary-teal to-teal-600 text-white px-14 py-4 rounded-full text-2xl font-semibold shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 focus:ring-4 focus:ring-primary-teal/30 focus:outline-none"
           >
             {t('game.submit')}
           </button>

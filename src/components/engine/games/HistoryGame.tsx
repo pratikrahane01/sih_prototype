@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { PatientService } from '../../../services/api/PatientService';
 import { SpeechSynthesisService } from '../../../services/accessibility/SpeechSynthesisService';
 import { SpeechRecognitionService, type SpeechRecognitionState } from '../../../services/accessibility/SpeechRecognitionService';
 import { LanguageService } from '../../../services/accessibility/LanguageService';
 import { generateHistoryQuestions, type HistoryQuestion } from '../../../services/demo/PersonalizedQuestionService';
-import { DEMO_PATIENT_ID } from '../../../services/demo/DemoMemoryData';
 import { CheckCircle, XCircle, Mic, AlertCircle, Play } from 'lucide-react';
 import { useLanguage } from '../../../contexts/LanguageContext';
 
@@ -25,8 +23,7 @@ interface Props {
 }
 
 export const HistoryGame: React.FC<Props> = ({ difficulty, onComplete }) => {
-  const [questions,     setQuestions]     = useState<HistoryQuestion[]>([]);
-  const [currentIndex,  setCurrentIndex]  = useState(0);
+  const [,     setQuestions]     = useState<HistoryQuestion[]>([]);  const [currentIndex,  setCurrentIndex]  = useState(0);
   const [displayScore,  setDisplayScore]  = useState(0);
   const [responseTimes, setResponseTimes] = useState<number[]>([]);
   const [feedback,      setFeedback]      = useState<{ message: string; isCorrect: boolean } | null>(null);

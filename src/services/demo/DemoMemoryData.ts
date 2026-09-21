@@ -1,7 +1,7 @@
 /**
  * DemoMemoryData.ts
  * ==================
- * Centralized demo dataset for the SIH26003 "Calm Intelligence" prototype.
+ * Centralized demo dataset for the SIH26003 "Smaran Sarathii" prototype.
  *
  * This simulates a caregiver who has already entered meaningful memories for the
  * patient "Nani" (age 72, Assamese-speaking).

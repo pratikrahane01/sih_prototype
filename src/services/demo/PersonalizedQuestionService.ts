@@ -104,6 +104,16 @@ export interface LifeStoryQuestion {
   questionText: string;
 }
 
+export interface HistoryQuestion {
+  id: string;
+  questionText: string;
+  options: string[];
+  correctAnswer: string;
+  voiceQuestion: string;
+  voiceHint: string;
+  keywords: string[];
+}
+
 export interface SongQuestion {
   song: PersonalMemory | DemoMemory;
   options: string[];
@@ -111,6 +121,82 @@ export interface SongQuestion {
   voiceQuestion: string;
   voiceHint: string;
   keywords: string[];
+}
+
+
+// ── Localized Terms Helper ───────────────────────────────────────────────────
+
+const LOCALIZED_TERMS: Record<string, Record<string, string>> = {
+  // Names
+  "Arun": { mr: "अरुण", hi: "अरुण", as: "অৰুণ" },
+  "Meena": { mr: "मीना", hi: "मीना", as: "মীনা" },
+  "Riya": { mr: "रिया", hi: "रिया", as: "ৰিয়া" },
+  "Ramesh": { mr: "रमेश", hi: "रमेश", as: "ৰমেশ" },
+  "Sita": { mr: "सीता", hi: "सीता", as: "সীতা" },
+  "Rajesh": { mr: "राजेश", hi: "राजेश", as: "ৰাজেশ" },
+
+  // Relationships
+  "Son": { mr: "मुलगा", hi: "बेटा", as: "ল'ৰা" },
+  "Daughter": { mr: "मुलगी", hi: "बेटी", as: "ছোৱালী" },
+  "Grandson": { mr: "नातू", hi: "पोता", as: "নাতি" },
+  "Granddaughter": { mr: "नात", hi: "पोती", as: "নাতিনী" },
+  "Brother": { mr: "भाऊ", hi: "भाई", as: "ককায়েক" },
+  "Sister": { mr: "बहीण", hi: "बहन", as: "ভনীয়েক" },
+  "Wife": { mr: "पत्नी", hi: "पत्नी", as: "পত্নী" },
+  "Husband": { mr: "पती", hi: "पति", as: "স্বামী" },
+  "Friend": { mr: "मित्र", hi: "दोस्त", as: "বন্ধু" },
+  "Neighbor": { mr: "शेजारी", hi: "पड़ोसी", as: "চুবুৰীয়া" },
+
+  // Places
+  "Pune": { mr: "पुणे", hi: "पुणे", as: "পুনে" },
+  "Mumbai": { mr: "मुंबई", hi: "मुंबई", as: "মুম্বাই" },
+  "Delhi": { mr: "दिल्ली", hi: "दिल्ली", as: "দিল্লী" },
+  "Nashik": { mr: "नाशिक", hi: "नासिक", as: "নাসিক" },
+  "Nagpur": { mr: "नागपूर", hi: "नागपुर", as: "নাগপুৰ" },
+  "Kolkata": { mr: "कोलकाता", hi: "कोलकाता", as: "কলকাতা" },
+  "Guwahati": { mr: "गुवाहाटी", hi: "गुवाहाटी", as: "গুৱাহাটী" },
+  "Jorhat": { mr: "जोरहाट", hi: "जोरहाट", as: "যোৰহাট" },
+
+  // Songs
+  "Lag Ja Gale": { mr: "लग जा गले", hi: "लग जा गले", as: "লগ জা গলে" },
+  "Ajeeb Dastan Hai Yeh": { mr: "अजीब दास्तान है ये", hi: "अजीब दास्तान है ये", as: "অজীব দাস্তান হে য়ে" },
+  "O Majhi Re": { mr: "ओ माझी रे", hi: "ओ माझी रे", as: "অ' মাঝি ৰে" },
+  "Bistirno Parore": { mr: "बिस्तीर्ण पारोरे", hi: "बिस्तीर्ण पारोरे", as: "বিস্তীৰ্ণ পাৰৰে" },
+  "Shukratara Mand Wara": { mr: "शुक्रतारा मंद वारा", hi: "शुक्रतारा मंद वारा", as: "শুক্ৰতাৰা মন্দ ৱাৰা" },
+  "Airaneechya Deva Tula": { mr: "ऐरणीच्या देवा तुला", hi: "ऐरणीच्या देवा तुला", as: "এৰনিচ্যা দেৱা তুলা" },
+  "Mendichya Panavar": { mr: "मेंदीच्या पानावर", hi: "मेंदीच्या पानावर", as: "মেন্দিচ্যা পানাৱৰ" },
+  "Mi Dolkar Daryacha Raja": { mr: "मी डोलकर दर्याचा राजा", hi: "मी डोलकर", as: "মি ডোলকৰ" },
+  "Ya Janmavar Ya Jagnyavar Shatada Prem Karave": { mr: "या जन्मावर या जगण्यावर शतदा प्रेम करावे", hi: "या जन्मावर", as: "য়া জন্মাৱৰ" },
+  "Kabhi Kabhie Mere Dil Mein": { mr: "कभी कभी मेरे दिल में", hi: "कभी कभी मेरे दिल में", as: "কভি কভি মেৰে দিল মেঁ" },
+  "Awara Hoon": { mr: "आवारा हूँ", hi: "आवारा हूँ", as: "আৱাৰা হুঁ" },
+  "Pyar Hua Iqrar Hua": { mr: "प्यार हुआ इकरार हुआ", hi: "प्यार हुआ इकरार हुआ", as: "প্যাৰ হুৱা ইকৰাৰ হুৱা" },
+  "Suhana Safar Aur Yeh Mausam": { mr: "सुहाना सफर और ये मौसम", hi: "सुहाना सफर और ये मौसम", as: "সুহানা চফৰ ঔৰ য়ে মৌচম" },
+  "Manuhe Manuhor Babe": { mr: "मानुहे मानुहोर बाबे", hi: "मानुहे मानुहोर बाबे", as: "মানুহে মানুহৰ বাবে" },
+  "Moi Eti Jajabor": { mr: "मोई एटी जाजबोर", hi: "मोई एटी जाजबोर", as: "মই এটি যাযাবৰ" },
+  "Buku Hom Hom Kore": { mr: "बुकु होम होम कोरे", hi: "बुकु होम होम कोरे", as: "বুকু হম হম কৰে" },
+  "O Bideshi Bandhu": { mr: "ओ बिदेशी बंधू", hi: "ओ बिदेशी बंधू", as: "অ' বিদেশী বন্ধু" },
+  "Chhanda Mandal": { mr: "छंद मंडळ", hi: "छंद मंडल", as: "ছন্দ মণ্ডল" },
+  "Festival Music": { mr: "उत्सवाचे संगीत", hi: "त्योहार का संगीत", as: "উৎসৱৰ সংগীত" },
+  "Raag Bhairavi": { mr: "राग भैरवी", hi: "राग भैरवी", as: "ৰাগ ভৈৰৱী" },
+
+
+  // History & Weapons
+  "Wagh Nakh": { mr: "वाघ नख", hi: "वाघ नख", as: "বাঘ নখ" },
+  "Sword": { mr: "तलवार", hi: "तलवार", as: "তৰোৱাল" },
+  "Spear": { mr: "भाला", hi: "भाला", as: "যাঠি" },
+  "Dagger": { mr: "खंजीर", hi: "खंजर", as: "ডেগাৰ" },
+  "Maratha Empire": { mr: "मराठा साम्राज्य", hi: "मराठा साम्राज्य", as: "মাৰাঠা সাম্ৰাজ্য" },
+  "Mughal Empire": { mr: "मुघल साम्राज्य", hi: "मुगल साम्राज्य", as: "মোগল সাম্ৰাজ্য" },
+  "Maurya Empire": { mr: "मौर्य साम्राज्य", hi: "मौर्य साम्राज्य", as: "মৌৰ্য সাম্ৰাজ্য" },
+  "Gupta Empire": { mr: "गुप्त साम्राज्य", hi: "गुप्त साम्राज्य", as: "গুপ্ত সাম্ৰাজ্য" }
+};
+
+function getLocalText(text: string): string {
+  const lang = LanguageService.getCurrentLanguageCode();
+  if (LOCALIZED_TERMS[text] && LOCALIZED_TERMS[text][lang]) {
+    return LOCALIZED_TERMS[text][lang];
+  }
+  return text;
 }
 
 // ── Question Generators ────────────────────────────────────────────────────────
@@ -134,19 +220,35 @@ export function generateWhoIsThisQuestions(
              : Math.min(5, people.length);
 
   const selected = shuffle(people).slice(0, numQ);
+  const lang = LanguageService.getCurrentLanguageCode();
 
   return selected.map(person => {
-    // Easy → ask name; Hard → ask relationship; Medium → random
     const askName = difficulty === 1 ? true
                   : difficulty === 3 ? false
                   : Math.random() > 0.5;
 
     const correctAnswer = askName ? person.name : person.relationship;
-    const questionText  = askName
-      ? "Who is this person?"
-      : "What is your relationship with this person?";
+    
+    let questionText = askName ? "Who is this person?" : "What is your relationship with this person?";
+    if (lang === 'mr') questionText = askName ? "ही व्यक्ती कोण आहे?" : "या व्यक्तीशी तुमचे काय नाते आहे?";
+    else if (lang === 'hi') questionText = askName ? "यह व्यक्ति कौन है?" : "इस व्यक्ति के साथ आपका क्या रिश्ता है?";
+    else if (lang === 'as') questionText = askName ? "এই ব্যক্তিজন কোন?" : "এই ব্যক্তিজনৰ সৈতে আপোনাৰ সম্পৰ্ক কি?";
 
-    // Build distractors from other people + fixed pool
+    const voiceQuestion = questionText;
+
+    let voiceHint = "";
+    if (askName) {
+      if (lang === 'mr') voiceHint = `ते तुमचे ${getLocalText(person.relationship)} आहेत.`;
+      else if (lang === 'hi') voiceHint = `ये आपके ${getLocalText(person.relationship)} हैं।`;
+      else if (lang === 'as') voiceHint = `তেওঁ আপোনাৰ ${getLocalText(person.relationship)}।`;
+      else voiceHint = `They are your ${person.relationship}.`;
+    } else {
+      if (lang === 'mr') voiceHint = `त्यांचे नाव ${getLocalText(person.name)} आहे.`;
+      else if (lang === 'hi') voiceHint = `इनका नाम ${getLocalText(person.name)} है।`;
+      else if (lang === 'as') voiceHint = `তেওঁৰ নাম ${getLocalText(person.name)}।`;
+      else voiceHint = `Their name is ${person.name}.`;
+    }
+
     const otherPeople = people.filter(p => p.id !== person.id);
     const peerValues  = askName
       ? otherPeople.map(p => p.name)
@@ -159,24 +261,12 @@ export function generateWhoIsThisQuestions(
       3
     );
 
-    const lang = LanguageService.getCurrentLanguageCode();
-    
-    let voiceQuestion = askName ? "Who is this person?" : "What is your relationship with this person?";
-    let voiceHint = askName ? `Their name starts with ${correctAnswer.charAt(0)}.` : `They are your ${correctAnswer}.`;
-    
-    if (lang === 'mr') {
-      voiceQuestion = askName ? "ही व्यक्ती कोण आहे?" : "या व्यक्तीसोबत तुमचे नाते काय आहे?";
-      voiceHint = askName ? `त्यांचे नाव ${correctAnswer.charAt(0)} या अक्षराने सुरू होते.` : `ते तुमचे ${correctAnswer} आहेत.`;
-    } else if (lang === 'hi') {
-      voiceQuestion = askName ? "यह व्यक्ति कौन है?" : "इस व्यक्ति के साथ आपका क्या रिश्ता है?";
-      voiceHint = askName ? `इनका नाम ${correctAnswer.charAt(0)} से शुरू होता है।` : `वे आपके ${correctAnswer} हैं।`;
-    } else if (lang === 'as') {
-      voiceQuestion = askName ? "এই ব্যক্তিজন কোন?" : "এই ব্যক্তিজনৰ সৈতে আপোনাৰ সম্পৰ্ক কি?";
-      voiceHint = askName ? `তেওঁলোকৰ নাম ${correctAnswer.charAt(0)} ৰে আৰম্ভ হয়।` : `তেওঁলোক আপোনাৰ ${correctAnswer} হয়।`;
+    const translatedAnswer = getLocalText(correctAnswer);
+    const keywords = translatedAnswer.toLowerCase().replace(/[^\p{L}\p{M}\p{N} ]/gu, '').split(' ').filter(w => w.length > 1);
+    keywords.push(translatedAnswer.toLowerCase());
+    if (translatedAnswer !== correctAnswer) {
+      keywords.push(correctAnswer.toLowerCase());
     }
-
-    const keywords = correctAnswer.toLowerCase().replace(/[^\\p{L}\\p{N} ]/gu, '').split(' ').filter((w: string) => w.length > 2);
-    keywords.push(correctAnswer.toLowerCase());
 
     return {
       person,
@@ -389,6 +479,11 @@ export function generateFavoriteSongQuestions(
     const keywords = correctAnswer.toLowerCase().replace(/[^a-z0-9 ]/g, '').split(' ').filter((w: string) => w.length > 2);
     keywords.push(correctAnswer.toLowerCase());
 
+    // Add native keywords if provided in metadata for proper STT matching in regional languages
+    if (metadata.nativeKeywords && Array.isArray(metadata.nativeKeywords)) {
+       metadata.nativeKeywords.forEach((kw: string) => keywords.push(kw.toLowerCase()));
+    }
+
     const otherOptions = songs
       .filter(s => s.id !== song.id)
       .map(s => {
@@ -406,10 +501,19 @@ export function generateFavoriteSongQuestions(
       3
     );
 
+    // Apply translations to the options for the UI
+    const localizedCorrectAnswer = getLocalText(correctAnswer);
+    const localizedOptions = shuffle([correctAnswer, ...distractors]).map(opt => getLocalText(opt));
+
+    // Also add the localized correct answer to keywords so it can be matched
+    const localizedKeywords = localizedCorrectAnswer.toLowerCase().replace(/[^\p{L}\p{M}\p{N} ]/gu, '').split(' ').filter((w: string) => w.length > 1);
+    localizedKeywords.forEach(kw => keywords.push(kw));
+    keywords.push(localizedCorrectAnswer.toLowerCase());
+
     return {
       song,
-      options: shuffle([correctAnswer, ...distractors]),
-      correctAnswer,
+      options: localizedOptions,
+      correctAnswer: localizedCorrectAnswer,
       voiceQuestion,
       voiceHint,
       keywords
@@ -440,7 +544,7 @@ export function generateHistoryQuestions(): HistoryQuestion[] {
     q1Hint = "ইয়াৰ নাম বাঘৰ নখৰ ওপৰত ৰখা হৈছে।";
   }
 
-  const q1Keywords = q1Correct.toLowerCase().replace(/[^\\p{L}\\p{N} ]/gu, '').split(' ').filter((w: string) => w.length > 2);
+  const q1Keywords = q1Correct.toLowerCase().replace(/[^\p{L}\p{M}\p{N} ]/gu, '').split(' ').filter((w) => w.length > 2);
   q1Keywords.push(q1Correct.toLowerCase());
 
   const q2Correct = getLocalText("Maratha Empire");
@@ -459,7 +563,7 @@ export function generateHistoryQuestions(): HistoryQuestion[] {
     q2Hint = "মহাৰাষ্ট্ৰত আৰম্ভ হোৱা ই ভাৰতৰ এক প্ৰধান শক্তি আছিল।";
   }
 
-  const q2Keywords = q2Correct.toLowerCase().replace(/[^\\p{L}\\p{N} ]/gu, '').split(' ').filter((w: string) => w.length > 2);
+  const q2Keywords = q2Correct.toLowerCase().replace(/[^\p{L}\p{M}\p{N} ]/gu, '').split(' ').filter((w) => w.length > 2);
   q2Keywords.push(q2Correct.toLowerCase());
 
   return [

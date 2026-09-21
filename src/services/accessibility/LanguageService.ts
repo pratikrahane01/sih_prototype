@@ -188,6 +188,33 @@ class LanguageServiceClass {
   }
 
   /**
+   * Translates common names for the prototype UI.
+   */
+  public getLocalName(englishName: string): string {
+    const lang = this.getCurrentLanguageCode();
+    if (lang === 'en') return englishName;
+    
+    const nameMap: Record<string, Record<string, string>> = {
+      'Arun': { 'hi': 'अरुण', 'mr': 'अरुण', 'as': 'অৰুণ' },
+      'Riya': { 'hi': 'रिया', 'mr': 'रिया', 'as': 'ৰিয়া' },
+      'Meena': { 'hi': 'मीना', 'mr': 'मीना', 'as': 'মীনা' },
+      'Suresh': { 'hi': 'सुरेश', 'mr': 'सुरेश', 'as': 'সুৰেশ' },
+      'Priya': { 'hi': 'प्रिया', 'mr': 'प्रिया', 'as': 'প্ৰিয়া' },
+      'Kavita': { 'hi': 'कविता', 'mr': 'कविता', 'as': 'কবিতা' },
+      'Rajesh': { 'hi': 'राजेश', 'mr': 'राजेश', 'as': 'ৰাজেশ' },
+      'Anand': { 'hi': 'आनंद', 'mr': 'आनंद', 'as': 'আনন্দ' },
+      'Sita': { 'hi': 'सीता', 'mr': 'सीता', 'as': 'সীতা' },
+      'Mohan': { 'hi': 'मोहन', 'mr': 'मोहन', 'as': 'মোহন' }
+    };
+
+    const entry = nameMap[englishName];
+    if (entry && entry[lang]) {
+      return entry[lang];
+    }
+    return englishName;
+  }
+
+  /**
    * Prototype Normalization: Maps a foreign language query to English equivalent
    * so the existing IntentService can process it canonically.
    * This avoids creating a full NLP model per language for the prototype.

@@ -5,7 +5,7 @@ import patternPoster from '../assets/games/pattern_completion_poster.jpg';
 import spatialPoster from '../assets/games/spatial_navigation_poster.jpg';
 import whoIsThisPoster from '../assets/games/who_is_this_poster.jpg';
 import memoryMomentsPoster from '../assets/games/memory_moments_poster.jpg';
-import myLifeStoryPoster from '../assets/games/my_life_story_poster.jpg';
+
 import favoriteSongPoster from '../assets/games/favorite_song_poster.jpg';
 
 export const GameRegistry: GameDefinition[] = [
@@ -37,7 +37,7 @@ export const GameRegistry: GameDefinition[] = [
     icon: 'Star',
     poster: attentionPoster,
     estimatedDuration: '2 min',
-    instructions: 'Tap the BLUE STAR as quickly as you can, ignoring other shapes.'
+    instructions: 'Tap the DIYA (Oil Lamp) as quickly as you can, ignoring other shapes.'
   },
   {
     id: 'pattern-game',
@@ -84,36 +84,7 @@ export const GameRegistry: GameDefinition[] = [
     estimatedDuration: '3 min',
     instructions: 'Look at the photo and select the name or relationship of the person shown.'
   },
-  {
-    id: 'memory-moments',
-    name: 'Memory Moments',
-    titleKey: 'game.memoryMoments.title',
-    descriptionKey: 'game.memoryMoments.description',
-    instructionsKey: 'game.memoryMoments.instructions',
-    category: 'personalized',
-    domain: 'personal_memory',
-    description: 'Recall details from important moments in your life.',
-    baseDifficulty: 1,
-    icon: 'Image',
-    poster: memoryMomentsPoster,
-    estimatedDuration: '4 min',
-    instructions: 'Look at the memory, then answer questions about where or when it happened.'
-  },
-  {
-    id: 'life-story',
-    name: 'My Life Story',
-    titleKey: 'game.myLifeStory.title',
-    descriptionKey: 'game.myLifeStory.description',
-    instructionsKey: 'game.myLifeStory.instructions',
-    category: 'personalized',
-    domain: 'personal_timeline',
-    description: 'Arrange your life events in the correct order.',
-    baseDifficulty: 2,
-    icon: 'Calendar',
-    poster: myLifeStoryPoster,
-    estimatedDuration: '5 min',
-    instructions: 'Look at the events and select the one that happened first.'
-  },
+
   {
     id: 'favorite-song',
     name: 'My Favorite Song',

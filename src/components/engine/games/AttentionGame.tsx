@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Star, Circle, Square, Triangle, Hexagon, Octagon } from 'lucide-react';
+import { Flame, Flower2, Sun, Diamond, Circle } from 'lucide-react';
 
 interface Props {
   difficulty: number;
   onComplete: (result: any) => void;
 }
 
-const SHAPES = [Circle, Square, Triangle, Hexagon, Octagon];
+const SHAPES = [Flower2, Sun, Diamond, Circle];
 
 export const AttentionGame: React.FC<Props> = ({ difficulty, onComplete }) => {
   const [startTime, setStartTime] = useState<number>(0);
@@ -21,7 +21,7 @@ export const AttentionGame: React.FC<Props> = ({ difficulty, onComplete }) => {
     // Generate grid items
     const newItems = Array(numItems).fill(null).map((_, index) => {
       const isTarget = index === 0; // The first one will be the target, then we shuffle
-      const ShapeIcon = isTarget ? Star : SHAPES[Math.floor(Math.random() * SHAPES.length)];
+      const ShapeIcon = isTarget ? Flame : SHAPES[Math.floor(Math.random() * SHAPES.length)];
       return {
         id: index,
         isTarget,
@@ -59,25 +59,32 @@ export const AttentionGame: React.FC<Props> = ({ difficulty, onComplete }) => {
   return (
     <div className="flex flex-col items-center w-full">
       <div 
-        className="grid gap-4 w-full max-w-2xl" 
+        className="grid gap-6 w-full max-w-3xl bg-white/40 backdrop-blur-md p-8 rounded-[2rem] shadow-xl border border-white/60" 
         style={{ gridTemplateColumns: `repeat(${gridColumns}, minmax(0, 1fr))` }}
       >
-        {items.map(item => {
+        {items.map((item, idx) => {
           const Icon = item.icon;
           return (
             <button
               key={item.id}
               onClick={() => handleSelect(item.isTarget)}
-              className="p-8 bg-gray-50 rounded-2xl flex justify-center items-center border-4 border-transparent hover:border-gray-200 transition-colors"
+              className="group p-8 bg-white rounded-3xl flex justify-center items-center border-4 border-transparent hover:border-indigo-100 hover:bg-gradient-to-br hover:from-white hover:to-indigo-50 shadow-sm hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 animate-[popUp_0.4s_ease-out_forwards]"
+              style={{ animationDelay: `${idx * 50}ms`, opacity: 0 }}
             >
               <Icon 
-                className={`w-16 h-16 ${item.isTarget ? 'text-attention-amber' : 'text-secondary-sage'}`} 
+                className={`w-16 h-16 transition-transform duration-300 group-hover:scale-110 drop-shadow-sm ${item.isTarget ? 'text-attention-amber' : 'text-slate-400 group-hover:text-slate-500'}`} 
                 fill={item.isTarget ? 'currentColor' : 'none'}
               />
             </button>
           );
         })}
       </div>
+      <style>{`
+        @keyframes popUp {
+          0% { transform: scale(0.8) translateY(20px); opacity: 0; }
+          100% { transform: scale(1) translateY(0); opacity: 1; }
+        }
+      `}</style>
     </div>
   );
 };
