@@ -1,5 +1,6 @@
 import { MemoryService } from '../api/MemoryService';
 import { IntentService } from './IntentService';
+import { LanguageService } from '../accessibility/LanguageService';
 import type { PersonalMemory } from '../../types';
 
 class AssistantServiceClass {
@@ -11,7 +12,10 @@ class AssistantServiceClass {
     // Artificial latency for "thinking"
     await new Promise(resolve => setTimeout(resolve, 800));
 
-    const { intent, entity } = IntentService.detectIntent(userQuery);
+    // 1. Normalize query to English so intent detection works
+    const normalizedQuery = LanguageService.normalizeQueryToEnglish(userQuery);
+
+    const { intent, entity } = IntentService.detectIntent(normalizedQuery);
 
     let memories: PersonalMemory[] = [];
 
@@ -30,38 +34,38 @@ class AssistantServiceClass {
       memories = MemoryService.searchMemories(patientId, entity);
     } else {
       // General search fallback
-      memories = MemoryService.searchMemories(patientId, userQuery);
+      memories = MemoryService.searchMemories(patientId, normalizedQuery);
     }
+
+    let response = "";
 
     // Response Generation Strategy (Deterministic for prototype)
     if (memories.length === 0) {
       // Hallucination protection
-      if (intent === 'LOCATION_OF_OBJECT') return `I don't have a saved location for your ${entity || 'object'} yet.`;
-      if (intent === 'PERSON_RELATIONSHIP') return `I don't have information saved about someone named ${entity || 'that person'}.`;
-      if (intent === 'DAILY_ROUTINE') return `I don't see any routines saved for you right now.`;
-      if (intent === 'GET_MEMORY_CATEGORY') return `I don't see any memories saved under the ${entity} category.`;
-      if (intent === 'GET_MEMORY') return `I couldn't find a memory about ${entity}.`;
-      
-      return "I don't have that information saved yet. You can ask your caregiver to add it.";
+      if (intent === 'LOCATION_OF_OBJECT') response = `I don't have a saved location for your ${entity || 'object'} yet.`;
+      else if (intent === 'PERSON_RELATIONSHIP') response = `I don't have information saved about someone named ${entity || 'that person'}.`;
+      else if (intent === 'DAILY_ROUTINE') response = `I don't see any routines saved for you right now.`;
+      else if (intent === 'GET_MEMORY_CATEGORY') response = `I don't see any memories saved under the ${entity} category.`;
+      else if (intent === 'GET_MEMORY') response = `I couldn't find a memory about ${entity}.`;
+      else response = "I don't have that information saved yet. You can ask your caregiver to add it.";
+    } else {
+      const memory = memories[0]; // Take best match
+
+      // Format response based on intent to make it natural
+      if (intent === 'LOCATION_OF_OBJECT') {
+        response = `Your ${memory.title.toLowerCase()} is ${memory.content.toLowerCase()}.`;
+      } else if (intent === 'PERSON_RELATIONSHIP') {
+        response = `${memory.content}`;
+      } else if (intent === 'DAILY_ROUTINE') {
+        response = `Your routine: ${memory.title} is ${memory.content.toLowerCase()}.`;
+      } else {
+        // Default formatting
+        response = `${memory.content}`;
+      }
     }
 
-    const memory = memories[0]; // Take best match
-
-    // Format response based on intent to make it natural
-    if (intent === 'LOCATION_OF_OBJECT') {
-      return `Your ${memory.title.toLowerCase()} is ${memory.content.toLowerCase()}.`;
-    }
-
-    if (intent === 'PERSON_RELATIONSHIP') {
-      return `${memory.content}`;
-    }
-
-    if (intent === 'DAILY_ROUTINE') {
-      return `Your routine: ${memory.title} is ${memory.content.toLowerCase()}.`;
-    }
-
-    // Default formatting
-    return `${memory.content}`;
+    // 2. Localize the English response back to the patient's language
+    return LanguageService.localizeResponse(response);
   }
 }
 
