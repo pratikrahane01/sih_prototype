@@ -420,33 +420,38 @@ export function generateFavoriteSongQuestions(
   const allMemories = getEffectiveMemories(patientId);
   let songs = allMemories.filter(m => m.type === 'SONG');
 
-  // Fallback: If caregiver hasn't added any songs specifically, use the regional demo songs based on active language.
-  if (songs.length === 0) {
-    const lang = LanguageService.getCurrentLanguageCode();
-    songs = DEMO_MEMORIES.filter(m => {
-      if (m.type !== 'SONG') return false;
+  // Filter songs by current language if language metadata exists.
+  // This is crucial because demo songs are loaded into localStorage, bypassing the empty check.
+  const lang = LanguageService.getCurrentLanguageCode();
+  
+  let languageFilteredSongs = songs.filter(song => {
+    try {
+      const content = JSON.parse(song.content);
+      // If language is specified, it must match. If not specified, we assume it's language-agnostic.
+      return !content.language || content.language === lang;
+    } catch(e) {
+      return true; // Not JSON or no language metadata, include it
+    }
+  });
+
+  // If no songs match the current language, try Hindi as a fallback.
+  if (languageFilteredSongs.length === 0) {
+    languageFilteredSongs = songs.filter(song => {
       try {
-        const content = JSON.parse(m.content);
-        return content.language === lang;
-      } catch (e) {
-        return false;
+        const content = JSON.parse(song.content);
+        return !content.language || content.language === 'hi';
+      } catch(e) {
+        return true;
       }
     });
-
-    // If no songs found for the selected language, fallback to Hindi (or all if even Hindi is empty)
-    if (songs.length === 0) {
-       songs = DEMO_MEMORIES.filter(m => {
-         if (m.type !== 'SONG') return false;
-         try {
-           const content = JSON.parse(m.content);
-           return content.language === 'hi';
-         } catch(e) { return false; }
-       });
-       if (songs.length === 0) {
-          songs = DEMO_MEMORIES.filter(m => m.type === 'SONG');
-       }
-    }
   }
+
+  // If still no songs, just use whatever is available
+  if (languageFilteredSongs.length === 0) {
+    languageFilteredSongs = songs;
+  }
+
+  songs = languageFilteredSongs;
 
   if (songs.length === 0) return [];
 
