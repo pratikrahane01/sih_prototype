@@ -39,6 +39,7 @@ export const FavoriteSongGame: React.FC<Props> = ({ difficulty, onComplete }) =>
   const scoreRef     = useRef(0);
   const mistakesRef  = useRef(0);
   const hintsRef     = useRef(0);
+  const questionsRef = useRef<SongQuestion[]>([]);
   const audioRef     = useRef<HTMLAudioElement | null>(null);
   const timeoutRef   = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { t } = useLanguage();
@@ -47,6 +48,7 @@ export const FavoriteSongGame: React.FC<Props> = ({ difficulty, onComplete }) =>
     const patientId = PatientService.getProfile()?.id || DEMO_PATIENT_ID;
     const qs = generateFavoriteSongQuestions(patientId, difficulty);
     setQuestions(qs);
+    questionsRef.current = qs;
     
     // Automatically enable voice mode for this interactive game if not enabled
     if (!LanguageService.isVoiceModeEnabled()) {
@@ -66,6 +68,13 @@ export const FavoriteSongGame: React.FC<Props> = ({ difficulty, onComplete }) =>
     };
   }, [difficulty]);
 
+  useEffect(() => {
+    if (gameState === 'PLAYING_SONG' && audioRef.current) {
+      audioRef.current.currentTime = 0;
+      audioRef.current.play().catch(e => console.error("Audio play failed:", e));
+    }
+  }, [currentIndex, gameState]);
+
   const startQuestion = (index: number, qs: SongQuestion[]) => {
     if (index >= qs.length) return;
     setCurrentIndex(index);
@@ -75,49 +84,47 @@ export const FavoriteSongGame: React.FC<Props> = ({ difficulty, onComplete }) =>
     setTranscript('');
     startTimeRef.current = Date.now();
     
-    if (audioRef.current) {
-      audioRef.current.currentTime = 0;
-      audioRef.current.play().catch(() => {});
-    }
+    // Play is now handled by the useEffect watching [currentIndex, gameState]
 
-    const playDuration = Math.floor(Math.random() * 3000) + 3000; // 3 to 6 seconds
+    const playDuration = 60000; // 60 seconds
     timeoutRef.current = setTimeout(() => {
       if (audioRef.current) audioRef.current.pause();
       askQuestion(qs[index]);
     }, playDuration);
   };
 
-  const askQuestion = (q: SongQuestion) => {
+  const askQuestion = async (q: SongQuestion) => {
     setGameState('ASKING_QUESTION');
-    SpeechSynthesisService.speak(q.voiceQuestion);
-    
-    const waitTime = Math.max(3000, q.voiceQuestion.length * 70);
-    timeoutRef.current = setTimeout(() => {
-      startListening(q);
-    }, waitTime);
+    await SpeechSynthesisService.speak(q.voiceQuestion);
+    startListening(q);
   };
 
   const startListening = (q: SongQuestion) => {
     setGameState('LISTENING');
     setTranscript('');
-    SpeechRecognitionService.startListening((state: SpeechRecognitionState) => {
-       if (state === 'ERROR' || state === 'UNSUPPORTED') {
-          setGameState('WAITING_MANUAL_INPUT');
-       }
-    }).then(result => {
-       setTranscript(result);
-       evaluateAnswer(result, q);
-    }).catch(err => {
-       console.error("Speech error", err);
-       setGameState('WAITING_MANUAL_INPUT');
-    });
+    SpeechRecognitionService.startListening(
+      (state: SpeechRecognitionState) => {
+         if (state === 'ERROR' || state === 'UNSUPPORTED') {
+            setGameState('WAITING_MANUAL_INPUT');
+         }
+      },
+      (result: string, isFinal: boolean) => {
+         setTranscript(result);
+         evaluateAnswer(result, isFinal, q);
+      },
+      (err: Error) => {
+         console.error("Speech error", err);
+         setGameState('WAITING_MANUAL_INPUT');
+      }
+    );
   };
 
-  const evaluateAnswer = (spokenText: string, q: SongQuestion) => {
-    setGameState('EVALUATING');
+  const evaluateAnswer = (spokenText: string, isFinal: boolean, q: SongQuestion) => {
     const lowerText = spokenText.toLowerCase();
     
     if (lowerText.includes("don't know") || lowerText.includes("mahit nahi") || lowerText.includes("no idea")) {
+       SpeechRecognitionService.stopListening();
+       setGameState('EVALUATING');
        provideHint(q);
        return;
     }
@@ -125,43 +132,59 @@ export const FavoriteSongGame: React.FC<Props> = ({ difficulty, onComplete }) =>
     const isMatch = q.keywords.some(kw => lowerText.includes(kw));
     
     if (isMatch) {
+       SpeechRecognitionService.stopListening();
+       setGameState('EVALUATING');
        handleSuccess(q);
-    } else {
+    } else if (isFinal) {
+       setGameState('EVALUATING');
        mistakesRef.current += 1;
        provideHint(q);
     }
   };
 
-  const provideHint = (q: SongQuestion) => {
+  const provideHint = async (q: SongQuestion) => {
     setGameState('HINTING');
     hintsRef.current += 1;
-    setFeedback({ message: "Hint: " + q.voiceHint, isCorrect: false });
-    SpeechSynthesisService.speak(q.voiceHint);
     
-    const waitTime = Math.max(3000, q.voiceHint.length * 70);
-    timeoutRef.current = setTimeout(() => {
-      setFeedback(null);
-      startListening(q);
-    }, waitTime);
+    let wrongMsg = "That's not quite right. Here is a hint: ";
+    const lang = LanguageService.getCurrentLanguageCode();
+    if (lang === 'mr') wrongMsg = "ते बरोबर नाही. येथे एक सूचना आहे: ";
+    else if (lang === 'hi') wrongMsg = "यह सही नहीं है। यहाँ एक संकेत है: ";
+    else if (lang === 'as') wrongMsg = "সেইটো সম্পূৰ্ণ শুদ্ধ নহয়। ইয়াত এটা ইংগিত দিয়া হৈছে: ";
+    
+    setFeedback({ message: "Hint: " + q.voiceHint, isCorrect: false });
+    await SpeechSynthesisService.speak(wrongMsg + q.voiceHint);
+    
+    setFeedback(null);
+    setAnswered(null);
+    startListening(q);
   };
 
-  const handleSuccess = (q: SongQuestion) => {
+  const handleSuccess = async (q: SongQuestion) => {
     setGameState('SUCCESS');
     scoreRef.current += 100;
     setDisplayScore(scoreRef.current);
     setFeedback({ message: t('game.correct') + "! " + q.correctAnswer, isCorrect: true });
-    SpeechSynthesisService.speak("Excellent! That is correct.");
+    
+    let successMsg = "Excellent! That is correct.";
+    const lang = LanguageService.getCurrentLanguageCode();
+    if (lang === 'mr') successMsg = "उत्कृष्ट! ते बरोबर आहे.";
+    else if (lang === 'hi') successMsg = "उत्कृष्ट! यह सही है।";
+    else if (lang === 'as') successMsg = "সুন্দৰ! সেয়া সঁচা।";
+    
+    await SpeechSynthesisService.speak(successMsg);
     
     const timeTaken = Date.now() - startTimeRef.current;
     setResponseTimes(prev => [...prev, timeTaken]);
 
-    timeoutRef.current = setTimeout(() => {
-      if (currentIndex + 1 < questions.length) {
-         startQuestion(currentIndex + 1, questions);
-      } else {
-         finishGame(timeTaken);
-      }
-    }, 4000);
+    const qs = questionsRef.current;
+    const actualIndex = qs.indexOf(q);
+
+    if (actualIndex + 1 < qs.length) {
+      startQuestion(actualIndex + 1, qs);
+    } else {
+      finishGame(timeTaken);
+    }
   };
 
   const finishGame = (lastTime: number) => {
@@ -216,14 +239,14 @@ export const FavoriteSongGame: React.FC<Props> = ({ difficulty, onComplete }) =>
     return (
       <div className="flex flex-col items-center justify-center p-12 text-center h-full min-h-[50vh]">
         <Music className="w-20 h-20 text-primary-teal mb-6" />
-        <h2 className="text-3xl font-bold text-text-charcoal mb-4">Ready to play?</h2>
-        <p className="text-lg text-gray-600 mb-8 max-w-md">Listen to the song and guess who sang it or which movie it is from.</p>
+        <h2 className="text-3xl font-bold text-text-charcoal mb-4">{t('game.ready_play')}</h2>
+        <p className="text-lg text-gray-600 mb-8 max-w-md">{t('game.listen_guess')}</p>
         <button
           onClick={() => startQuestion(0, questions)}
           className="bg-primary-teal hover:bg-teal-700 text-white font-bold py-4 px-10 rounded-full shadow-lg transition-all active:scale-95 text-xl flex items-center gap-3"
         >
           <Play className="w-6 h-6 fill-current" />
-          Start Game
+          {t('game.start')}
         </button>
       </div>
     );
@@ -258,7 +281,7 @@ export const FavoriteSongGame: React.FC<Props> = ({ difficulty, onComplete }) =>
       {/* Progress */}
       <div className="mb-6">
         <div className="flex justify-between text-sm font-semibold text-gray-400 mb-2">
-          <span>Question {currentIndex + 1} of {total}</span>
+          <span>{t('game.question_x')} {currentIndex + 1} {t('game.of_y')} {total}</span>
           <span className="text-primary-teal font-bold">{t('game.score')}: {displayScore}</span>
         </div>
         <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
@@ -274,7 +297,7 @@ export const FavoriteSongGame: React.FC<Props> = ({ difficulty, onComplete }) =>
          {gameState === 'PLAYING_SONG' && (
            <div className="flex flex-col items-center animate-pulse">
              <Music className="w-12 h-12 text-ai-blue mb-3" />
-             <p className="text-xl font-bold text-ai-blue">Playing a song...</p>
+             <p className="text-xl font-bold text-ai-blue">{t('game.playing_song')}</p>
            </div>
          )}
          {gameState === 'ASKING_QUESTION' && (
@@ -291,8 +314,8 @@ export const FavoriteSongGame: React.FC<Props> = ({ difficulty, onComplete }) =>
                   <Mic className="w-8 h-8" />
                </div>
              </div>
-             <p className="text-xl font-bold text-text-charcoal mt-2">Listening to your answer...</p>
-             <p className="text-sm text-gray-500 mt-1">Speak now</p>
+             <p className="text-xl font-bold text-text-charcoal mt-2">{t('game.listening_answer')}</p>
+             <p className="text-sm text-gray-500 mt-1">{t('game.speak_now')}</p>
            </div>
          )}
          {gameState === 'HINTING' && (
@@ -304,7 +327,7 @@ export const FavoriteSongGame: React.FC<Props> = ({ difficulty, onComplete }) =>
          {gameState === 'EVALUATING' && (
            <div className="flex flex-col items-center">
              <div className="w-10 h-10 border-4 border-ai-blue border-t-transparent rounded-full animate-spin mb-3" />
-             <p className="text-xl font-bold text-gray-600">Thinking...</p>
+             <p className="text-xl font-bold text-gray-600">{t('game.thinking')}</p>
              <p className="text-md text-gray-500 italic mt-2">"{transcript}"</p>
            </div>
          )}
@@ -312,7 +335,7 @@ export const FavoriteSongGame: React.FC<Props> = ({ difficulty, onComplete }) =>
            <div className="flex flex-col items-center">
              <AlertCircle className="w-10 h-10 text-amber-500 mb-3" />
              <p className="text-lg font-bold text-text-charcoal">{currentQ.voiceQuestion}</p>
-             <p className="text-md text-gray-500 mt-1">Voice input unavailable. Please tap an answer below.</p>
+             <p className="text-md text-gray-500 mt-1">{t('game.voice_unavailable')}</p>
            </div>
          )}
          {gameState === 'SUCCESS' && (

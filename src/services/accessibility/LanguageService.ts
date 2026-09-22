@@ -155,7 +155,7 @@ class LanguageServiceClass {
 
   public getCurrentLanguageCode(): SupportedLanguageCode {
     const profile = PatientService.getProfile();
-    return (profile?.language as SupportedLanguageCode) || 'en';
+    return (profile?.language as SupportedLanguageCode) || 'as';
   }
 
   public getLanguageConfig(code: SupportedLanguageCode): SupportedLanguage | undefined {
@@ -163,8 +163,7 @@ class LanguageServiceClass {
   }
 
   public isVoiceModeEnabled(): boolean {
-    const profile = PatientService.getProfile();
-    return !!profile?.voiceMode;
+    return true;
   }
 
   public setLanguage(code: SupportedLanguageCode) {
@@ -186,6 +185,33 @@ class LanguageServiceClass {
     // Fallback to English if translation is missing
     const strings = UI_STRINGS[lang] || UI_STRINGS['en'];
     return strings[key] || UI_STRINGS['en'][key];
+  }
+
+  /**
+   * Translates common names for the prototype UI.
+   */
+  public getLocalName(englishName: string): string {
+    const lang = this.getCurrentLanguageCode();
+    if (lang === 'en') return englishName;
+    
+    const nameMap: Record<string, Record<string, string>> = {
+      'Arun': { 'hi': 'अरुण', 'mr': 'अरुण', 'as': 'অৰুণ' },
+      'Riya': { 'hi': 'रिया', 'mr': 'रिया', 'as': 'ৰিয়া' },
+      'Meena': { 'hi': 'मीना', 'mr': 'मीना', 'as': 'মীনা' },
+      'Suresh': { 'hi': 'सुरेश', 'mr': 'सुरेश', 'as': 'সুৰেশ' },
+      'Priya': { 'hi': 'प्रिया', 'mr': 'प्रिया', 'as': 'প্ৰিয়া' },
+      'Kavita': { 'hi': 'कविता', 'mr': 'कविता', 'as': 'কবিতা' },
+      'Rajesh': { 'hi': 'राजेश', 'mr': 'राजेश', 'as': 'ৰাজেশ' },
+      'Anand': { 'hi': 'आनंद', 'mr': 'आनंद', 'as': 'আনন্দ' },
+      'Sita': { 'hi': 'सीता', 'mr': 'सीता', 'as': 'সীতা' },
+      'Mohan': { 'hi': 'मोहन', 'mr': 'मोहन', 'as': 'মোহন' }
+    };
+
+    const entry = nameMap[englishName];
+    if (entry && entry[lang]) {
+      return entry[lang];
+    }
+    return englishName;
   }
 
   /**
@@ -254,9 +280,49 @@ class LanguageServiceClass {
       "I don't know the answer to that. I only know about the memories your family has shared with me.": "মই ইয়াৰ উত্তৰ নাজানো। আপোনাৰ পৰিয়ালে মোৰ সৈতে ভাগ-বতৰা কৰা স্মৃতিবোৰৰ বিষয়েহে মই জানো।"
     };
 
+    if (lang === 'mr') {
+      Object.assign(dict, {
+        "Your glasses are on the bedside table.": "तुमचा चष्मा बेडसाइड टेबलवर आहे.",
+        "Priya is your daughter. She visits every Sunday.": "प्रिया तुमची मुलगी आहे. ती दर रविवारी येते.",
+        "In the morning, you usually have tea, go for a short walk, and then read the newspaper.": "सकाळी तुम्ही साधारणपणे चहा घेता, थोड्या चालायला जाता आणि मग वर्तमानपत्र वाचता.",
+        "Your doctor's clinic is located at Park Street, near the main square.": "तुमच्या डॉक्टरांचे क्लिनिक मुख्य चौकाजवळ, पार्क स्ट्रीट येथे आहे.",
+        "I'm sorry, I don't remember that right now. Could you ask your caregiver to add it to my memory?": "क्षमस्व, मला आता ते आठवत नाही. तुम्ही तुमच्या काळजीवाहूला ते माझ्या मेमरीमध्ये जोडण्यास सांगू शकता का?",
+        "I don't know the answer to that. I only know about the memories your family has shared with me.": "मला याचे उत्तर माहीत नाही. मला फक्त तुमच्या कुटुंबाने माझ्यासोबत शेअर केलेल्या आठवणींबद्दल माहिती आहे."
+      });
+    }
+
     // Attempt direct match (very naive for prototype)
     const exactMatch = (dict as Record<string, string>)[englishResponse];
     if (exactMatch) return exactMatch;
+
+    // Handle dynamic fallbacks from AssistantService
+    if (englishResponse.startsWith("I don't have a saved location for your")) {
+       const obj = englishResponse.replace("I don't have a saved location for your ", "").replace(" yet.", "");
+       const localObj = this.getLocalName(obj);
+       if (lang === 'hi') return `मेरे पास अभी आपके ${localObj} का स्थान सुरक्षित नहीं है।`;
+       if (lang === 'mr') return `माझ्याकडे अजून तुमच्या ${localObj} चे स्थान जतन केलेले नाही.`;
+       if (lang === 'as') return `মোৰ ওচৰত এতিয়াও আপোনাৰ ${localObj}ৰ স্থান সংৰক্ষিত নাই।`;
+    }
+    
+    if (englishResponse.startsWith("I don't have information saved about someone named")) {
+       const person = englishResponse.replace("I don't have information saved about someone named ", "").replace(".", "");
+       const localPerson = this.getLocalName(person);
+       if (lang === 'hi') return `मेरे पास ${localPerson} नाम के व्यक्ति के बारे में जानकारी सुरक्षित नहीं है।`;
+       if (lang === 'mr') return `माझ्याकडे ${localPerson} नावाच्या व्यक्तीबद्दल माहिती जतन केलेली नाही.`;
+       if (lang === 'as') return `মোৰ ওচৰত ${localPerson} নামৰ ব্যক্তিজনৰ বিষয়ে তথ্য সংৰক্ষিত নাই।`;
+    }
+
+    if (englishResponse === "I don't see any routines saved for you right now.") {
+       if (lang === 'hi') return "मुझे अभी आपके लिए कोई दिनचर्या सुरक्षित नहीं दिख रही है।";
+       if (lang === 'mr') return "मला सध्या तुमच्यासाठी कोणतीही दिनचर्या जतन केलेली दिसत नाही.";
+       if (lang === 'as') return "মই এতিয়া আপোনাৰ বাবে কোনো ৰুটিন সংৰক্ষিত দেখা নাই।";
+    }
+
+    if (englishResponse === "I don't have that information saved yet. You can ask your caregiver to add it.") {
+       if (lang === 'hi') return "मेरे पास वह जानकारी अभी सुरक्षित नहीं है। आप अपने देखभालकर्ता से इसे जोड़ने के लिए कह सकते हैं।";
+       if (lang === 'mr') return "माझ्याकडे ती माहिती अजून जतन केलेली नाही. तुम्ही तुमच्या काळजीवाहूला ती जोडण्यास सांगू शकता.";
+       if (lang === 'as') return "মোৰ ওচৰত সেই তথ্য এতিয়াও সংৰক্ষিত নাই। আপুনি আপোনাৰ যতন লওঁতাজনক ইয়াক যোগ কৰিবলৈ ক'ব পাৰে।";
+    }
 
     // Fallback if not an exact templated match
     return englishResponse;

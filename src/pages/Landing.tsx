@@ -104,10 +104,15 @@ const Landing: React.FC = () => {
             )}
           </div>
         </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-10 sm:py-14 flex flex-col gap-10">
+        <h1 className="text-4xl md:text-5xl font-bold text-primary-teal mb-4">
+          Smaran Sarathii
+        </h1>
+        <p className="text-lg text-text-charcoal/80 mb-2 max-w-lg mx-auto">
+          AI-Based Cognitive Activity and Personal Memory Assistance Platform
+        </p>
+        <p className="text-sm text-text-charcoal/50 mb-10 max-w-lg mx-auto">
+          For elderly patients in the North Eastern Region (NER) · Multilingual-ready architecture
+        </p>
 
         {/* Hero Section */}
         <section className="text-center max-w-2xl mx-auto space-y-4">

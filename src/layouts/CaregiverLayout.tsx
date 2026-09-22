@@ -29,7 +29,7 @@ const CaregiverLayout: React.FC = () => {
       <aside className="w-64 h-screen max-h-screen bg-white border-r border-gray-200 hidden md:flex flex-col flex-shrink-0 sticky top-0 z-30 shadow-xs">
         <div className="p-6 border-b border-gray-200 flex-shrink-0">
           <h2 className="text-xl font-bold text-primary-teal">Caregiver Portal</h2>
-          <p className="text-sm text-gray-500 mt-1">Calm Intelligence</p>
+          <p className="text-sm text-gray-500 mt-1">Smaran Sarathii</p>
         </div>
         
         <nav className="flex-1 overflow-y-auto p-4 space-y-1" aria-label="Caregiver navigation">
@@ -121,7 +121,7 @@ const CaregiverLayout: React.FC = () => {
         {/* Non-Diagnostic Disclaimer */}
         <footer className="p-6 text-center text-xs text-gray-400 border-t border-gray-200 bg-white mt-auto flex-shrink-0">
           <p>
-            Calm Intelligence monitors cognitive activity performance to support caregiving decisions.
+            Smaran Sarathii monitors cognitive activity performance to support caregiving decisions.
             It is not a medical device and does not provide clinical diagnoses or medical recommendations.
           </p>
         </footer>

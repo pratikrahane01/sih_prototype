@@ -5,6 +5,10 @@ export type SpeechRecognitionState = 'IDLE' | 'LISTENING' | 'PROCESSING' | 'ERRO
 class SpeechRecognitionServiceClass {
   private recognition: any = null;
   private isSupportedBrowser = false;
+  private intentionalStop = false;
+  private fullFinalTranscript = '';
+  private lastInterimTranscript = '';
+  private SpeechRecognitionConstructor: any = null;
 
   constructor() {
     this.init();
@@ -12,12 +16,12 @@ class SpeechRecognitionServiceClass {
 
   private init() {
     // Check for browser support
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (SpeechRecognition) {
+    this.SpeechRecognitionConstructor = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (this.SpeechRecognitionConstructor) {
       this.isSupportedBrowser = true;
-      this.recognition = new SpeechRecognition();
-      this.recognition.continuous = false; // Stop listening after one phrase
-      this.recognition.interimResults = false;
+      console.log("[Diagnostics] SpeechRecognition: Browser supports SpeechRecognition API.");
+    } else {
+      console.warn("[Diagnostics] SpeechRecognition: Browser DOES NOT support SpeechRecognition API.");
     }
   }
 
@@ -25,27 +29,51 @@ class SpeechRecognitionServiceClass {
     return this.isSupportedBrowser;
   }
 
+  private resolveSpeechLocale(langCode: string): string {
+    switch (langCode) {
+      case 'as': return 'hi-IN'; // Fallback to Hindi STT for Assamese to guarantee mic opens
+      case 'mr': return 'mr-IN';
+      case 'hi': return 'hi-IN';
+      case 'en': return 'en-IN';
+      default: return 'en-US';
+    }
+  }
+
   /**
-   * Starts listening for speech.
-   * Resolves with the transcribed text, or rejects with an error.
+   * Starts listening for speech in real-time.
    */
-  public startListening(onStateChange: (state: SpeechRecognitionState) => void): Promise<string> {
-    return new Promise((resolve, reject) => {
-      if (!this.isSupportedBrowser || !this.recognition) {
+  public startListening(
+    onStateChange: (state: SpeechRecognitionState) => void,
+    onResult: (transcript: string, isFinal: boolean) => void,
+    onError: (err: Error) => void
+  ): void {
+      this.intentionalStop = false;
+      this.fullFinalTranscript = '';
+      this.lastInterimTranscript = '';
+
+      if (!this.isSupportedBrowser || !this.SpeechRecognitionConstructor) {
+        console.warn("[Diagnostics] SpeechRecognition: Cannot start listening. Unsupported.");
         onStateChange('UNSUPPORTED');
-        reject(new Error("Voice input is not supported on this device."));
+        onError(new Error("Voice input is not supported on this device."));
         return;
       }
 
+      // Always recreate the recognition instance to guarantee language switches take effect
+      if (this.recognition) {
+        try {
+          this.recognition.stop();
+        } catch (e) {}
+      }
+      this.recognition = new this.SpeechRecognitionConstructor();
+      this.recognition.continuous = false; // Auto-stop on silence to trigger onend
+      this.recognition.interimResults = true;
+
       // Configure language based on the user's current profile
       const currentLangCode = LanguageService.getCurrentLanguageCode();
+      const resolvedLocale = this.resolveSpeechLocale(currentLangCode);
       
-      // Standard BCP-47 language tags for the speech recognition engine
-      let bcp47 = 'en-US';
-      if (currentLangCode === 'hi') bcp47 = 'hi-IN';
-      if (currentLangCode === 'as') bcp47 = 'as-IN'; // If the browser supports Assamese
-      
-      this.recognition.lang = bcp47;
+      console.log(`[Diagnostics] SpeechRecognition: Starting engine. UI Lang: ${currentLangCode} -> Locale: ${resolvedLocale}`);
+      this.recognition.lang = resolvedLocale;
 
       this.recognition.onstart = () => {
         onStateChange('LISTENING');
@@ -53,40 +81,74 @@ class SpeechRecognitionServiceClass {
 
       this.recognition.onresult = (event: any) => {
         onStateChange('PROCESSING');
-        const transcript = event.results[0][0].transcript;
-        resolve(transcript);
+        let currentFinal = '';
+        let currentInterim = '';
+
+        for (let i = 0; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) {
+            currentFinal += event.results[i][0].transcript;
+          } else {
+            currentInterim += event.results[i][0].transcript;
+          }
+        }
+        
+        this.fullFinalTranscript = currentFinal;
+        
+        const displayTranscript = currentFinal + currentInterim;
+        this.lastInterimTranscript = displayTranscript;
+
+        if (displayTranscript.trim().length > 0) {
+          // Fire interim result so the UI updates
+          onResult(displayTranscript, false);
+        }
       };
 
       this.recognition.onerror = (event: any) => {
-        if (event.error === 'no-speech') {
-          // Soft error
+        if (event.error === 'not-allowed') {
+          this.intentionalStop = true;
           onStateChange('ERROR');
-          reject(new Error("I didn't hear anything. Please try again."));
-        } else if (event.error === 'not-allowed') {
+          onError(new Error("Microphone access is needed for voice input."));
+        } else if (event.error !== 'no-speech' && event.error !== 'audio-capture' && event.error !== 'aborted') {
+          console.error(`[Diagnostics] SpeechRecognition Error: ${event.error}. Locale: ${resolvedLocale}`);
+          this.intentionalStop = true;
           onStateChange('ERROR');
-          reject(new Error("Microphone access is needed for voice input. You can continue using text."));
-        } else {
-          onStateChange('ERROR');
-          reject(new Error("Speech recognition error."));
+          onError(new Error(`Speech recognition error: ${event.error}`));
         }
       };
 
       this.recognition.onend = () => {
-        // If it ended without results or error, we usually go back to idle.
-        // The promise should have already resolved or rejected.
+        let finalTrimmed = this.fullFinalTranscript.trim();
+        if (finalTrimmed.length === 0) {
+          finalTrimmed = this.lastInterimTranscript.trim();
+        }
+        
+        if (finalTrimmed.length > 0) {
+          console.log(`[Diagnostics] SpeechRecognition: Session ended. Final accumulated transcript: "${finalTrimmed}"`);
+          // Send the complete transcript to the evaluator
+          onResult(finalTrimmed, true);
+        }
+
+        // Only restart if we haven't intentionally stopped AND we didn't just capture a final sentence.
+        // Wait, if we captured a final sentence, `onResult(..., true)` will synchronously trigger `stopListening`
+        // which sets `intentionalStop = true`. So this logic holds perfectly.
+        if (!this.intentionalStop) {
+          try {
+            this.recognition.start();
+          } catch (e) {
+            // Ignore if already started
+          }
+        }
       };
 
       try {
         this.recognition.start();
-      } catch (err) {
-        // Handle cases where start() is called while already started
-        onStateChange('ERROR');
-        reject(err);
+      } catch (err: any) {
+        // Ignore if already started
       }
-    });
   }
 
   public stopListening() {
+    this.intentionalStop = true;
     if (this.recognition) {
       this.recognition.stop();
     }

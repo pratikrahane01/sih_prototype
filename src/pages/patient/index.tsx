@@ -271,7 +271,7 @@ export const SingleGame: React.FC = () => {
         </div>
         <h2 className="text-3xl font-bold text-primary-teal mb-4">Personalizing Activity</h2>
         <p className="text-xl text-text-charcoal/70 max-w-sm">
-          Calm Intelligence is analyzing your past performance to find the perfect difficulty level for you...
+          Smaran Sarathii is analyzing your past performance to find the perfect difficulty level for you...
         </p>
       </div>
     );

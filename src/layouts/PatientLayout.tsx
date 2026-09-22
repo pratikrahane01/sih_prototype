@@ -5,7 +5,7 @@ import { PatientService } from '../services/api/PatientService';
 import { useOfflineStatus } from '../hooks/useOfflineStatus';
 import type { SupportedLanguageCode } from '../types';
 import { useLanguage } from '../contexts/LanguageContext';
-
+import { PatientVoiceAssistant } from '../components/assistant/PatientVoiceAssistant';
 const PatientLayout: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -23,7 +23,7 @@ const PatientLayout: React.FC = () => {
     return (
       <div className="min-h-screen bg-background-warm flex flex-col items-center justify-center p-8 text-center">
         <Brain className="w-16 h-16 text-primary-teal mb-6" />
-        <h1 className="text-3xl font-bold text-primary-teal mb-4">Welcome to Calm Intelligence</h1>
+        <h1 className="text-3xl font-bold text-primary-teal mb-4">Welcome to Smaran Sarathii</h1>
         <p className="text-xl text-text-charcoal/70 mb-8 max-w-md">
           Let's set up your personal profile to get started.
         </p>
@@ -58,7 +58,7 @@ const PatientLayout: React.FC = () => {
               <Brain className="w-7 h-7 md:w-8 md:h-8 text-primary-teal" />
             </div>
             <div className="flex flex-col">
-              <h1 className="text-lg md:text-xl font-bold tracking-wide leading-tight text-primary-teal">Calm Intelligence</h1>
+              <h1 className="text-xl font-bold tracking-wide leading-tight">Smaran Sarathii</h1>
               {profile?.nickname || profile?.name ? (
                 <p className="text-xs md:text-sm text-text-charcoal/70 font-medium truncate max-w-[140px] sm:max-w-[200px]">
                   {profile.nickname || profile.name}
@@ -100,9 +100,10 @@ const PatientLayout: React.FC = () => {
               className="bg-white/80 hover:bg-white text-text-charcoal border border-gray-200 rounded-xl px-2.5 py-1.5 text-xs md:text-sm font-medium outline-none cursor-pointer transition-colors shadow-sm"
               aria-label="Select Language"
             >
-              <option value="en">English</option>
-              <option value="as">অসমীয়া</option>
-              <option value="mr">मराठी</option>
+              <option value="as" className="text-black">অসমীয়া (AS)</option>
+              <option value="mr" className="text-black">मराठी (MR)</option>
+              <option value="hi" className="text-black">हिन्दी (HI)</option>
+              <option value="en" className="text-black">English (EN)</option>
             </select>
 
             {isOffline && (
@@ -177,6 +178,9 @@ const PatientLayout: React.FC = () => {
           })}
         </div>
       </nav>
+
+      {/* Voice Assistant */}
+      <PatientVoiceAssistant />
     </div>
   );
 };

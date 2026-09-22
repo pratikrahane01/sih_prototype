@@ -1,5 +1,16 @@
 export const translations: Record<string, Record<string, string>> = {
   en: {
+
+    "game.playing_song": "Playing a song...",
+    "game.listening_answer": "Listening to your answer...",
+    "game.speak_now": "Speak now",
+    "game.thinking": "Thinking...",
+    "game.voice_unavailable": "Voice input unavailable. Please tap an answer below.",
+    "game.ready_play": "Ready to play?",
+    "game.listen_guess": "Listen to the song and guess who sang it or which movie it is from.",
+    "game.question_x": "Question",
+    "game.of_y": "of",
+
     // Navigation
     "navigation.home": "Home",
     "navigation.activities": "Activities",
@@ -40,6 +51,9 @@ export const translations: Record<string, Record<string, string>> = {
     "game.favoriteSong.title": "My Favorite Song",
     "game.favoriteSong.description": "Recognize music that is important to you.",
     "game.favoriteSong.instructions": "Listen to the audio clip and tell us what song it is.",
+    "game.historicalJourney.title": "Historical Journey",
+    "game.historicalJourney.description": "Watch animated historical stories and answer questions.",
+    "game.historicalJourney.instructions": "Watch the animated video, then tell us what happened.",
 
     // Cognitive Games
     "game.memoryMatch.title": "Memory Match",
@@ -47,7 +61,7 @@ export const translations: Record<string, Record<string, string>> = {
     "game.memoryMatch.instructions": "You will see a few objects. Try to remember them. When they disappear, select the ones you saw.",
     "game.selectiveAttention.title": "Selective Attention",
     "game.selectiveAttention.description": "Find the target symbol among distractors quickly.",
-    "game.selectiveAttention.instructions": "Tap the BLUE STAR as quickly as you can, ignoring other shapes.",
+    "game.selectiveAttention.instructions": "Tap the DIYA (Oil Lamp) as quickly as you can, ignoring other shapes.",
     "game.patternCompletion.title": "Pattern Completion",
     "game.patternCompletion.description": "Identify what comes next in the visual sequence.",
     "game.patternCompletion.instructions": "Look at the sequence of shapes. Choose the shape that correctly completes the pattern.",
@@ -223,6 +237,17 @@ export const translations: Record<string, Record<string, string>> = {
     },
   
   hi: {
+
+    "game.playing_song": "गाना बज रहा है...",
+    "game.listening_answer": "आपका उत्तर सुन रहा हूँ...",
+    "game.speak_now": "अब बोलें",
+    "game.thinking": "सोच रहा हूँ...",
+    "game.voice_unavailable": "वॉयस इनपुट उपलब्ध नहीं है। कृपया नीचे एक उत्तर पर टैप करें।",
+    "game.ready_play": "खेलने के लिए तैयार हैं?",
+    "game.listen_guess": "गाना सुनें और पहचानें कि इसे किसने गाया है या यह किस फिल्म का है।",
+    "game.question_x": "प्रश्न",
+    "game.of_y": "में से",
+
     // Navigation
     "navigation.home": "होम",
     "navigation.activities": "गतिविधियाँ",
@@ -263,6 +288,9 @@ export const translations: Record<string, Record<string, string>> = {
     "game.favoriteSong.title": "मेरा पसंदीदा गाना",
     "game.favoriteSong.description": "उस संगीत को पहचानें जो आपके लिए महत्वपूर्ण है।",
     "game.favoriteSong.instructions": "ऑडियो क्लिप सुनें और बताएं कि यह कौन सा गाना है।",
+    "game.historicalJourney.title": "ऐतिहासिक यात्रा",
+    "game.historicalJourney.description": "एनिमेटेड ऐतिहासिक कहानियां देखें और प्रश्नों के उत्तर दें।",
+    "game.historicalJourney.instructions": "एनिमेटेड वीडियो देखें, फिर बताएं कि क्या हुआ था।",
 
     // Cognitive Games
     "game.memoryMatch.title": "मेमोरी मैच",
@@ -270,7 +298,7 @@ export const translations: Record<string, Record<string, string>> = {
     "game.memoryMatch.instructions": "आप कुछ वस्तुएं देखेंगे। उन्हें याद रखने का प्रयास करें। जब वे गायब हो जाएं, तो उन वस्तुओं को चुनें जिन्हें आपने देखा था।",
     "game.selectiveAttention.title": "चयनात्मक ध्यान",
     "game.selectiveAttention.description": "अन्य आकृतियों के बीच लक्ष्य प्रतीक को जल्दी से खोजें।",
-    "game.selectiveAttention.instructions": "जितनी जल्दी हो सके नीले तारे पर टैप करें, अन्य आकृतियों को अनदेखा करें।",
+    "game.selectiveAttention.instructions": "जितनी जल्दी हो सके दीया (Oil Lamp) पर टैप करें, अन्य आकृतियों को अनदेखा करें।",
     "game.patternCompletion.title": "पैटर्न पूर्णता",
     "game.patternCompletion.description": "दृश्य अनुक्रम में आगे क्या आता है उसे पहचानें।",
     "game.patternCompletion.instructions": "आकृतियों के अनुक्रम को देखें। वह आकृति चुनें जो पैटर्न को सही ढंग से पूरा करती है।",
@@ -446,6 +474,17 @@ export const translations: Record<string, Record<string, string>> = {
     },
   
   as: {
+
+    "game.playing_song": "এটা গান বাজি আছে...",
+    "game.listening_answer": "আপোনাৰ উত্তৰ শুনি আছো...",
+    "game.speak_now": "এতিয়া কওক",
+    "game.thinking": "ভাবি আছো...",
+    "game.voice_unavailable": "ভইচ ইনপুট উপলব্ধ নহয়। অনুগ্ৰহ কৰি তলৰ উত্তৰ এটাত টিপক।",
+    "game.ready_play": "খেলিবলৈ সাজুনে?",
+    "game.listen_guess": "গানটো শুনক আৰু কোনে গাইছে বা কোনখন ছৱিৰ পৰা লোৱা হৈছে অনুমান কৰক।",
+    "game.question_x": "প্ৰশ্ন",
+    "game.of_y": "ৰ ভিতৰত",
+
     // Navigation
     "navigation.home": "মূল পৃষ্ঠা",
     "navigation.activities": "কাৰ্যকলাপ",
@@ -486,6 +525,9 @@ export const translations: Record<string, Record<string, string>> = {
     "game.favoriteSong.title": "মোৰ প্ৰিয় গান",
     "game.favoriteSong.description": "আপোনাৰ বাবে গুৰুত্বপূৰ্ণ সংগীত চিনাক্ত কৰক।",
     "game.favoriteSong.instructions": "অডিঅ' ক্লিপটো শুনক আৰু আমাক কওক যে এইটো কি গান।",
+    "game.historicalJourney.title": "ঐতিহাসিক যাত্ৰা",
+    "game.historicalJourney.description": "এনিমেটেড ঐতিহাসিক গল্পসমূহ চাওক আৰু প্ৰশ্নৰ উত্তৰ দিয়ক।",
+    "game.historicalJourney.instructions": "এনিমেটেড ভিডিঅ'টো চাওক, তাৰ পিছত কি ঘটিল কওক।",
 
     // Cognitive Games
     "game.memoryMatch.title": "মেম'ৰী মেচ",
@@ -493,7 +535,7 @@ export const translations: Record<string, Record<string, string>> = {
     "game.memoryMatch.instructions": "আপুনি কেইটামান বস্তু দেখিব। সেইবোৰ মনত ৰাখিবলৈ চেষ্টা কৰক। যেতিয়া সেইবোৰ নোহোৱা হয়, আপুনি দেখা বস্তুবোৰ বাছনি কৰক।",
     "game.selectiveAttention.title": "নিৰ্বাচিত মনোযোগ",
     "game.selectiveAttention.description": "অন্য আকৃতিতকৈ লক্ষ্য প্ৰতীকটো সোনকালে বিচাৰক।",
-    "game.selectiveAttention.instructions": "যিমান পাৰে সোনকালে নীলা তৰাটোত টিপক, অন্য আকৃতিবোৰ আওকাণ কৰক।",
+    "game.selectiveAttention.instructions": "যিমান পাৰে সোনকালে চাকি (Diya) টিপক, অন্য আকৃতিবোৰ আওকাণ কৰক।",
     "game.patternCompletion.title": "প্যাটাৰ্ণ সম্পূৰ্ণতা",
     "game.patternCompletion.description": "দৃশ্য ক্ৰমত পৰৱৰ্তী কি আহে সেয়া চিনাক্ত কৰক।",
     "game.patternCompletion.instructions": "আকৃতিবোৰৰ ক্ৰমটো চাওক। প্যাটাৰ্ণটো সঠিকভাৱে সম্পূৰ্ণ কৰা আকৃতিটো বাছনি কৰক।",
@@ -669,6 +711,17 @@ export const translations: Record<string, Record<string, string>> = {
     },
   
   mr: {
+
+    "game.playing_song": "गाणे वाजत आहे...",
+    "game.listening_answer": "तुमचे उत्तर ऐकत आहे...",
+    "game.speak_now": "आता बोला",
+    "game.thinking": "विचार करत आहे...",
+    "game.voice_unavailable": "आवाज इनपुट उपलब्ध नाही. कृपया खालील उत्तरावर टॅप करा.",
+    "game.ready_play": "खेळण्यासाठी तयार आहात?",
+    "game.listen_guess": "गाणे ऐका आणि ते कोणी गायले आहे किंवा ते कोणत्या चित्रपटातील आहे ते ओळखा.",
+    "game.question_x": "प्रश्न",
+    "game.of_y": "पैकी",
+
     // Navigation
     "navigation.home": "मुख्यपृष्ठ",
     "navigation.activities": "उपक्रम",
@@ -709,6 +762,9 @@ export const translations: Record<string, Record<string, string>> = {
     "game.favoriteSong.title": "माझे आवडते गाणे",
     "game.favoriteSong.description": "तुमच्यासाठी महत्त्वाचे असलेले संगीत ओळखा.",
     "game.favoriteSong.instructions": "ऑडिओ क्लिप ऐका आणि हे कोणते गाणे आहे ते आम्हाला सांगा.",
+    "game.historicalJourney.title": "ऐतिहासिक प्रवास",
+    "game.historicalJourney.description": "अॅनिमेटेड ऐतिहासिक कथा पहा आणि प्रश्नांची उत्तरे द्या.",
+    "game.historicalJourney.instructions": "अॅनिमेटेड व्हिडिओ पहा, नंतर काय झाले ते सांगा.",
 
     // Cognitive Games
     "game.memoryMatch.title": "मेमरी मॅच",
@@ -716,7 +772,7 @@ export const translations: Record<string, Record<string, string>> = {
     "game.memoryMatch.instructions": "तुम्हाला काही वस्तू दिसतील. त्या लक्षात ठेवण्याचा प्रयत्न करा. जेव्हा त्या अदृश्य होतील, तेव्हा तुम्ही पाहिलेल्या वस्तू निवडा.",
     "game.selectiveAttention.title": "निवडक लक्ष",
     "game.selectiveAttention.description": "इतर आकारांमधून लक्ष्य चिन्ह लवकर शोधा.",
-    "game.selectiveAttention.instructions": "इतर आकारांकडे दुर्लक्ष करून, शक्य तितक्या लवकर निळ्या तार्‍यावर टॅप करा.",
+    "game.selectiveAttention.instructions": "इतर आकारांकडे दुर्लक्ष करून, शक्य तितक्या लवकर दिव्यावर (Diya) टॅप करा.",
     "game.patternCompletion.title": "पॅटर्न पूर्णता",
     "game.patternCompletion.description": "दृश्य अनुक्रमात पुढे काय येते ते ओळखा.",
     "game.patternCompletion.instructions": "आकारांचा अनुक्रम पहा. पॅटर्न योग्यरित्या पूर्ण करणारा आकार निवडा.",

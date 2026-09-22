@@ -22,7 +22,7 @@ export const Onboarding: React.FC = () => {
   // Form State
   const [name, setName] = useState('');
   const [age, setAge] = useState<number | ''>('');
-  const [language, setLanguage] = useState<'en' | 'hi' | 'as'>('en');
+  const [language, setLanguage] = useState<'en' | 'hi' | 'as' | 'mr'>('as');
 
   const [nickname, setNickname] = useState('');
   const [favoriteActivities, setFavoriteActivities] = useState('');
@@ -162,13 +162,14 @@ export const Onboarding: React.FC = () => {
                 <label className="block text-xl mb-4 text-center">{t('onboarding.preferredLanguage')}</label>
                 <div className="grid grid-cols-1 gap-4">
                   {[
-                    { code: 'en', name: 'English', native: 'English' },
+                    { code: 'as', name: 'Assamese', native: 'অসমীয়া' },
+                    { code: 'mr', name: 'Marathi', native: 'मराठी' },
                     { code: 'hi', name: 'Hindi', native: 'हिन्दी' },
-                    { code: 'as', name: 'Assamese', native: 'অসমীয়া' }
+                    { code: 'en', name: 'English', native: 'English' }
                   ].map(lang => (
                     <button
                       key={lang.code}
-                      onClick={() => setLanguage(lang.code as 'en' | 'hi' | 'as')}
+                      onClick={() => setLanguage(lang.code as 'en' | 'hi' | 'as' | 'mr')}
                       className={`w-full p-4 rounded-xl border-2 text-xl font-medium transition-colors flex justify-between items-center ${language === lang.code ? 'border-primary-teal bg-primary-teal/10 text-primary-teal' : 'border-gray-200 text-gray-600 hover:border-primary-teal/50'}`}
                     >
                       <span>{lang.name}</span>

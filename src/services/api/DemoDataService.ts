@@ -36,7 +36,7 @@ const DEMO_PATIENT: Patient = {
   id: DEMO_PATIENT_ID,
   name: 'Anita Sharma',
   age: 72,
-  language: 'en',
+  language: 'as',
   region: 'NER',
   caregiverId: 'demo-caregiver-001',
   nickname: 'Nani',
@@ -49,7 +49,7 @@ const DEMO_PATIENT: Patient = {
   ],
   activityDurationPreference: 10,
   preferredTime: 'Morning',
-  voiceMode: false,
+  voiceMode: true,
   baselineProfile: {
     memory: 65,
     attention: 70,
