@@ -17,13 +17,13 @@ export const DietPreferenceView: React.FC = () => {
   if (!diet) return null;
 
   return (
-    <div className="w-full flex flex-col items-center px-4 md:px-0">
-      <div className="mb-10 text-center w-full max-w-3xl">
-        <h2 className="text-4xl font-bold text-primary-teal mb-4">{t('diet.title')}</h2>
+    <div className="w-full flex flex-col items-center px-4 sm:px-6 md:px-8 max-w-5xl mx-auto mt-2 md:mt-4 pb-10">
+      <div className="mb-8 text-center w-full">
+        <h2 className="text-4xl font-bold text-primary-teal mb-3">{t('diet.title')}</h2>
         <p className="text-xl text-text-charcoal/80 font-medium">{t('diet.subtitle')}</p>
       </div>
 
-      <div className="w-full max-w-3xl space-y-6">
+      <div className="w-full space-y-6">
         {/* Preferred Foods */}
         <div className="bg-white rounded-3xl p-6 md:p-8 border border-gray-100 shadow-sm">
           <div className="flex items-center mb-6">

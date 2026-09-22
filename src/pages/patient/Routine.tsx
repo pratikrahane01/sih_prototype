@@ -114,9 +114,9 @@ export const DailyRoutine: React.FC = () => {
   };
 
   return (
-    <div className="w-full flex flex-col items-center px-4 md:px-0 mt-2 md:mt-4 space-y-6 md:space-y-8 pb-10">
+    <div className="w-full flex flex-col items-center px-4 sm:px-6 md:px-8 mt-2 md:mt-4 space-y-6 md:space-y-8 pb-10 max-w-5xl mx-auto">
       {/* Routine Hero Section */}
-      <section className="relative w-full max-w-4xl rounded-[32px] overflow-hidden min-h-[180px] md:min-h-[220px] flex items-center shadow-sm">
+      <section className="relative w-full rounded-[32px] overflow-hidden min-h-[180px] md:min-h-[220px] flex items-center shadow-sm">
         <img src={routineHero} alt="Daily Routine" className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-transparent"></div>
         <div className="relative z-10 p-6 md:p-10 w-full md:w-2/3">
@@ -125,7 +125,7 @@ export const DailyRoutine: React.FC = () => {
         </div>
       </section>
 
-      <div className="w-full max-w-3xl">
+      <div className="w-full">
         {routines.length === 0 ? (
            <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm text-center">
              <p className="text-xl text-gray-500">{t('routine.empty')}</p>
