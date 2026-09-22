@@ -128,35 +128,35 @@ export const PatientHome: React.FC = () => {
           </h3>
         </div>
         
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
           {/* Daily Routine */}
-          <Link to="/patient/routine" className="bg-[#E8F0FE] rounded-[24px] p-4 sm:p-5 flex flex-col items-start hover:shadow-md transition-shadow group relative min-h-[140px] sm:min-h-[160px]">
-            <div className="bg-white rounded-[16px] p-3 text-ai-blue shadow-sm mb-3 group-hover:scale-105 transition-transform">
-              <Calendar className="w-6 h-6 sm:w-8 sm:h-8 stroke-2" />
+          <Link to="/patient/routine" className="bg-[#E8F0FE] rounded-[24px] p-5 md:p-6 flex flex-col items-start hover:shadow-md transition-all hover:scale-[1.01] group relative min-h-[150px] sm:min-h-[170px]">
+            <div className="bg-white rounded-[16px] p-3.5 text-ai-blue shadow-sm mb-3 group-hover:scale-105 transition-transform">
+              <Calendar className="w-7 h-7 sm:w-8 sm:h-8 stroke-2" />
             </div>
-            <h4 className="text-[16px] sm:text-[1.25rem] font-bold text-text-charcoal leading-tight mb-1">{t('home.dailyRoutine')}</h4>
-            <p className="text-text-charcoal/70 text-[12px] sm:text-sm font-medium pr-4 sm:pr-6">{t('home.viewRoutine')}</p>
-            <Play className="w-3 h-3 sm:w-4 sm:h-4 text-text-charcoal/40 absolute bottom-4 right-4 group-hover:text-primary-teal transition-colors" />
+            <h4 className="text-[17px] sm:text-[1.25rem] font-bold text-text-charcoal leading-tight mb-1">{t('home.dailyRoutine')}</h4>
+            <p className="text-text-charcoal/70 text-[13px] sm:text-sm font-medium pr-6">{t('home.viewRoutine')}</p>
+            <Play className="w-4 h-4 text-text-charcoal/40 absolute bottom-5 right-5 group-hover:text-primary-teal group-hover:translate-x-0.5 transition-all" />
           </Link>
           
           {/* Diet Preference */}
-          <Link to="/patient/diet" className="bg-[#E8F5E9] rounded-[24px] p-4 sm:p-5 flex flex-col items-start hover:shadow-md transition-shadow group relative min-h-[140px] sm:min-h-[160px]">
-            <div className="bg-white rounded-[16px] p-3 text-secondary-sage shadow-sm mb-3 group-hover:scale-105 transition-transform">
-              <Heart className="w-6 h-6 sm:w-8 sm:h-8 stroke-2" />
+          <Link to="/patient/diet" className="bg-[#E8F5E9] rounded-[24px] p-5 md:p-6 flex flex-col items-start hover:shadow-md transition-all hover:scale-[1.01] group relative min-h-[150px] sm:min-h-[170px]">
+            <div className="bg-white rounded-[16px] p-3.5 text-secondary-sage shadow-sm mb-3 group-hover:scale-105 transition-transform">
+              <Heart className="w-7 h-7 sm:w-8 sm:h-8 stroke-2" />
             </div>
-            <h4 className="text-[16px] sm:text-[1.25rem] font-bold text-text-charcoal leading-tight mb-1">{t('home.dietPreference')}</h4>
-            <p className="text-text-charcoal/70 text-[12px] sm:text-sm font-medium pr-4 sm:pr-6">{t('home.foodPreferences')}</p>
-            <Play className="w-3 h-3 sm:w-4 sm:h-4 text-text-charcoal/40 absolute bottom-4 right-4 group-hover:text-primary-teal transition-colors" />
+            <h4 className="text-[17px] sm:text-[1.25rem] font-bold text-text-charcoal leading-tight mb-1">{t('home.dietPreference')}</h4>
+            <p className="text-text-charcoal/70 text-[13px] sm:text-sm font-medium pr-6">{t('home.foodPreferences')}</p>
+            <Play className="w-4 h-4 text-text-charcoal/40 absolute bottom-5 right-5 group-hover:text-primary-teal group-hover:translate-x-0.5 transition-all" />
           </Link>
 
           {/* Recent Activity */}
-          <Link to="/patient/games" className="bg-[#FFF3E0] rounded-[24px] p-4 sm:p-5 flex flex-col items-start hover:shadow-md transition-shadow group relative min-h-[140px] sm:min-h-[160px]">
-            <div className="bg-white rounded-[16px] p-3 text-attention-amber shadow-sm mb-3 group-hover:scale-105 transition-transform">
-              <Clock className="w-6 h-6 sm:w-8 sm:h-8 stroke-2" />
+          <Link to="/patient/games" className="bg-[#FFF3E0] rounded-[24px] p-5 md:p-6 flex flex-col items-start hover:shadow-md transition-all hover:scale-[1.01] group relative min-h-[150px] sm:min-h-[170px]">
+            <div className="bg-white rounded-[16px] p-3.5 text-attention-amber shadow-sm mb-3 group-hover:scale-105 transition-transform">
+              <Clock className="w-7 h-7 sm:w-8 sm:h-8 stroke-2" />
             </div>
-            <h4 className="text-[16px] sm:text-[1.25rem] font-bold text-text-charcoal leading-tight mb-1">{t('home.recentActivity')}</h4>
-            <p className="text-text-charcoal/70 text-[12px] sm:text-sm font-medium pr-4 sm:pr-6">{t('home.viewPastSessions')}</p>
-            <Play className="w-3 h-3 sm:w-4 sm:h-4 text-text-charcoal/40 absolute bottom-4 right-4 group-hover:text-primary-teal transition-colors" />
+            <h4 className="text-[17px] sm:text-[1.25rem] font-bold text-text-charcoal leading-tight mb-1">{t('home.recentActivity')}</h4>
+            <p className="text-text-charcoal/70 text-[13px] sm:text-sm font-medium pr-6">{t('home.viewPastSessions')}</p>
+            <Play className="w-4 h-4 text-text-charcoal/40 absolute bottom-5 right-5 group-hover:text-primary-teal group-hover:translate-x-0.5 transition-all" />
           </Link>
         </div>
       </section>
@@ -183,13 +183,13 @@ export const GamesList: React.FC = () => {
   const cognitiveGames = GameRegistry.filter(g => g.category === 'general');
 
   return (
-    <div className="w-full flex flex-col items-center px-4 md:px-0">
+    <div className="w-full flex flex-col items-center px-4 sm:px-6 md:px-8 max-w-7xl mx-auto">
       
       {/* SECTION 1: Personal Memories */}
-      <div className="mb-6 w-full max-w-4xl">
+      <div className="mb-8 w-full">
         <h2 className="text-3xl font-bold text-primary-teal mb-2">{t('home.personalizedActivities')}</h2>
         <p className="text-lg text-text-charcoal/80 mb-6 font-medium">{t('home.personalizedActivitiesDesc')}</p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 w-full">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 w-full">
           {personalGames.map(game => (
             <ActivityCard
               key={game.id}
@@ -204,13 +204,13 @@ export const GamesList: React.FC = () => {
         </div>
       </div>
 
-      <div className="w-full max-w-4xl h-px bg-gray-200 my-8"></div>
+      <div className="w-full h-px bg-gray-200 my-4 md:my-6"></div>
 
       {/* SECTION 2: Cognitive Activities */}
-      <div className="mb-6 w-full max-w-4xl">
+      <div className="mb-8 w-full">
         <h2 className="text-3xl font-bold text-primary-teal mb-2">{t('home.generalCognitiveActivities')}</h2>
         <p className="text-lg text-text-charcoal/80 mb-6 font-medium">{t('home.generalCognitiveActivitiesDesc')}</p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 w-full">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 w-full">
           {cognitiveGames.map(game => (
             <ActivityCard
               key={game.id}
@@ -292,9 +292,9 @@ export const Insights: React.FC = () => {
   const { t } = useLanguage();
   
   return (
-    <div className="w-full flex flex-col items-center px-4 md:px-0 pb-10 mt-2 md:mt-4 space-y-6 md:space-y-8">
+    <div className="w-full flex flex-col items-center px-4 sm:px-6 md:px-8 pb-10 mt-2 md:mt-4 space-y-6 md:space-y-8 max-w-6xl mx-auto">
       {/* Insights Hero Section */}
-      <section className="relative w-full max-w-4xl rounded-[32px] overflow-hidden min-h-[180px] md:min-h-[220px] flex items-center shadow-sm">
+      <section className="relative w-full rounded-[32px] overflow-hidden min-h-[180px] md:min-h-[220px] flex items-center shadow-sm">
         <img src={insightsHero} alt="Your Insights" className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-transparent"></div>
         <div className="relative z-10 p-6 md:p-10 w-full md:w-2/3">
@@ -303,7 +303,7 @@ export const Insights: React.FC = () => {
         </div>
       </section>
 
-      <div className="w-full max-w-4xl space-y-8">
+      <div className="w-full space-y-8">
         
         {/* Top Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">

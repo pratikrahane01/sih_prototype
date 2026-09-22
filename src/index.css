@@ -2,13 +2,16 @@
 
 @theme {
   --color-primary-teal: #0F5C5E;
+  --color-primary-teal-dark: #0A3E40;
   --color-secondary-sage: #7BAE9B;
-  --color-background-warm: #F7F8F5;
+  --color-secondary-sage-dark: #568473;
+  --color-background-warm: #F8FAF7;
   --color-ai-blue: #4F8FBF;
   --color-attention-amber: #E7B65A;
   --color-text-charcoal: #243238;
 
-  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  --font-sans: 'Plus Jakarta Sans', 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Outfit', 'Plus Jakarta Sans', system-ui, sans-serif;
 }
 
 @layer base {
@@ -20,3 +23,4 @@
     -moz-osx-font-smoothing: grayscale;
   }
 }
+
