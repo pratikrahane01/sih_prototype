@@ -9,7 +9,7 @@ const CaregiverLayout: React.FC = () => {
   const location = useLocation();
   const { isOffline } = useOfflineStatus();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { language, setLanguage, t } = useLanguage();
+  const { language, setLanguage } = useLanguage();
 
   const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newLang = e.target.value as SupportedLanguageCode;
