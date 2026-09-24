@@ -1,5 +1,46 @@
 export const translations: Record<string, Record<string, string>> = {
   en: {
+    // Caregiver Dashboard
+    "caregiver.dashboard.title": "Good morning, Caregiver",
+    "caregiver.dashboard.subtitle": "Here's how today's activities are going for",
+    "caregiver.dashboard.activitiesCompleted": "Activities Completed",
+    "caregiver.dashboard.averageAccuracy": "Average Accuracy",
+    "caregiver.dashboard.averageResponseTime": "Avg Response Time",
+    "caregiver.dashboard.currentDifficulty": "Current Difficulty",
+    "caregiver.dashboard.activityPerformance": "Activity Performance by Domain",
+    "caregiver.dashboard.noActivityData": "No activity data yet.",
+    "caregiver.dashboard.completedActivities": "completed activities",
+    "caregiver.dashboard.adaptiveEngine": "Adaptive Activity Engine",
+    "caregiver.dashboard.adaptiveReason": "Reason: Activity accuracy",
+    "caregiver.dashboard.adaptiveMaintained": "The difficulty has been automatically adjusted to maintain the optimal cognitive challenge.",
+    "caregiver.dashboard.previous": "Previous",
+    "caregiver.dashboard.recommended": "Recommended",
+    "caregiver.dashboard.diff": "Diff",
+    "caregiver.dashboard.adaptiveWait": "Adaptive recommendation will appear after enough activity data is available.",
+    "caregiver.dashboard.patternInsights": "Activity Pattern Insights",
+    "caregiver.dashboard.statusStable": "Stable",
+    "caregiver.dashboard.statusWatch": "Watch",
+    "caregiver.dashboard.statusChange": "Recent change detected",
+    "caregiver.dashboard.statusNotEnough": "Not enough data",
+    "caregiver.dashboard.moreDataNeeded": "More activity data is needed to identify a reliable pattern.",
+    "caregiver.dashboard.activityAttention": "Activity attention",
+    "caregiver.dashboard.attentionDisclaimer": "Activity pattern changes can happen for many reasons. This information is not a medical diagnosis. If you have concerns about the patient's health or memory, consult a qualified healthcare professional.",
+    "caregiver.dashboard.recentActivity": "Recent Activity",
+    "caregiver.dashboard.viewAll": "View All",
+    "caregiver.dashboard.noRecentActivity": "Activities will appear here after the patient completes an activity.",
+    "caregiver.dashboard.aiMemoryAssistant": "AI Memory Assistant",
+    "caregiver.dashboard.savedMemories": "Saved Personal Memories",
+    "caregiver.dashboard.memoryActive": "Personal memory support is active.",
+    "caregiver.dashboard.noMemories": "No personal memories added yet.",
+    "caregiver.dashboard.dietPreferences": "Diet Preferences",
+    "caregiver.dashboard.manageDiet": "Manage dietary preferences and meal notes.",
+    "caregiver.dashboard.languageVoice": "Language & Voice",
+    "caregiver.dashboard.preferredLanguage": "Preferred Language",
+    "caregiver.dashboard.voiceAssistance": "Voice Assistance",
+    "caregiver.dashboard.enabledSupported": "Enabled & Supported",
+    "caregiver.dashboard.enabledUnsupported": "Enabled (Browser Unsupported)",
+    "caregiver.dashboard.disabled": "Disabled",
+
 
     "game.playing_song": "Playing a song...",
     "game.listening_answer": "Listening to your answer...",
@@ -237,6 +278,11 @@ export const translations: Record<string, Record<string, string>> = {
     },
   
   hi: {
+    "caregiver.dashboard.title": "सुप्रभात, देखभालकर्ता",
+    "caregiver.dashboard.subtitle": "आज की गतिविधियां कैसी चल रही हैं",
+    "caregiver.dashboard.activitiesCompleted": "पूरी की गई गतिविधियां",
+    "caregiver.dashboard.averageAccuracy": "औसत सटीकता",
+
 
     "game.playing_song": "गाना बज रहा है...",
     "game.listening_answer": "आपका उत्तर सुन रहा हूँ...",

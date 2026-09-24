@@ -6,11 +6,13 @@ import { ActivityInsightService } from '../../services/api/ActivityInsightServic
 import { LanguageService, SpeechRecognitionService } from '../../services/accessibility';
 import type { GameAttempt, PersonalMemory, MemoryCategory } from '../../types';
 import { Link } from 'react-router-dom';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { Activity, Brain, Clock, Target, ArrowUpRight, ArrowRight, BrainCircuit, Map as MapIcon, ChevronRight, AlertTriangle } from 'lucide-react';
 
 export const CaregiverDashboard: React.FC = () => {
   const patientId = PatientService.getProfile()?.id || 'demo-patient';
   const patientName = PatientService.getProfile()?.name || 'Patient';
+  const { t } = useLanguage();
 
   const overview = CaregiverAnalyticsService.getOverview(patientId);
   const domainPerformance = CaregiverAnalyticsService.getDomainPerformance(patientId);
@@ -28,15 +30,15 @@ export const CaregiverDashboard: React.FC = () => {
     <div className="space-y-8">
       {/* HEADER */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Good morning, Caregiver</h1>
-        <p className="text-lg text-gray-600">Here's how today's activities are going for <span className="font-semibold text-primary-teal">{patientName}</span>.</p>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('caregiver.dashboard.title')}</h1>
+        <p className="text-lg text-gray-600">{t('caregiver.dashboard.subtitle')} <span className="font-semibold text-primary-teal">{patientName}</span>.</p>
       </div>
 
       {/* SECTION 1 — TODAY'S OVERVIEW */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between hover:shadow-md transition">
           <div className="flex justify-between items-start mb-4">
-            <h3 className="text-gray-500 font-medium">Activities Completed</h3>
+            <h3 className="text-gray-500 font-medium">{t('caregiver.dashboard.activitiesCompleted')}</h3>
             <div className="p-2 bg-blue-50 rounded-lg"><Activity className="w-5 h-5 text-ai-blue" /></div>
           </div>
           <p className="text-4xl font-bold text-gray-900">{overview.activitiesCompleted}</p>
@@ -44,7 +46,7 @@ export const CaregiverDashboard: React.FC = () => {
         
         <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between hover:shadow-md transition">
           <div className="flex justify-between items-start mb-4">
-            <h3 className="text-gray-500 font-medium">Average Accuracy</h3>
+            <h3 className="text-gray-500 font-medium">{t('caregiver.dashboard.averageAccuracy')}</h3>
             <div className="p-2 bg-secondary-sage/20 rounded-lg"><Target className="w-5 h-5 text-secondary-sage" /></div>
           </div>
           <p className="text-4xl font-bold text-gray-900">{overview.averageAccuracy}%</p>
@@ -52,7 +54,7 @@ export const CaregiverDashboard: React.FC = () => {
 
         <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between hover:shadow-md transition">
           <div className="flex justify-between items-start mb-4">
-            <h3 className="text-gray-500 font-medium">Avg Response Time</h3>
+            <h3 className="text-gray-500 font-medium">{t('caregiver.dashboard.averageResponseTime')}</h3>
             <div className="p-2 bg-amber-50 rounded-lg"><Clock className="w-5 h-5 text-attention-amber" /></div>
           </div>
           <p className="text-4xl font-bold text-gray-900">{overview.averageResponseTime}s</p>
@@ -60,7 +62,7 @@ export const CaregiverDashboard: React.FC = () => {
 
         <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between hover:shadow-md transition">
           <div className="flex justify-between items-start mb-4">
-            <h3 className="text-gray-500 font-medium">Current Difficulty</h3>
+            <h3 className="text-gray-500 font-medium">{t('caregiver.dashboard.currentDifficulty')}</h3>
             <div className="p-2 bg-gray-100 rounded-lg"><ArrowUpRight className="w-5 h-5 text-gray-600" /></div>
           </div>
           <p className="text-4xl font-bold text-gray-900">{overview.averageDifficulty}</p>
@@ -71,10 +73,10 @@ export const CaregiverDashboard: React.FC = () => {
         
         {/* SECTION 2 — ACTIVITY PERFORMANCE */}
         <div className="lg:col-span-2 bg-white rounded-3xl border border-gray-100 shadow-sm p-8">
-          <h2 className="text-xl font-bold text-gray-900 mb-6">Activity Performance by Domain</h2>
+          <h2 className="text-xl font-bold text-gray-900 mb-6">{t('caregiver.dashboard.activityPerformance')}</h2>
           {domainPerformance.length === 0 ? (
             <div className="h-48 flex items-center justify-center text-gray-500 bg-gray-50 rounded-xl border border-dashed border-gray-200">
-              No activity data yet.
+              {t('caregiver.dashboard.noActivityData')}
             </div>
           ) : (
             <div className="space-y-6">
@@ -90,7 +92,7 @@ export const CaregiverDashboard: React.FC = () => {
                       style={{ width: `${dp.averageAccuracy}%` }}
                     ></div>
                   </div>
-                  <p className="text-xs text-gray-400 mt-1">{dp.attempts} completed activities</p>
+                  <p className="text-xs text-gray-400 mt-1">{dp.attempts} {t('caregiver.dashboard.completedActivities')}</p>
                 </div>
               ))}
             </div>
@@ -101,7 +103,7 @@ export const CaregiverDashboard: React.FC = () => {
         <div className="bg-[#f0f6fa] rounded-3xl border border-[#d6e8f4] shadow-sm p-8 flex flex-col">
           <div className="flex items-center text-ai-blue mb-4">
             <BrainCircuit className="w-6 h-6 mr-2" />
-            <h2 className="text-xl font-bold">Adaptive Activity Engine</h2>
+            <h2 className="text-xl font-bold">{t('caregiver.dashboard.adaptiveEngine')}</h2>
           </div>
           
           {adaptiveData ? (
@@ -112,18 +114,18 @@ export const CaregiverDashboard: React.FC = () => {
                 </p>
                 <div className="flex items-center justify-between bg-white p-4 rounded-2xl mb-4 border border-[#d6e8f4]">
                   <div className="text-center">
-                    <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Previous</p>
-                    <p className="text-2xl font-bold text-gray-700">Diff {adaptiveData.previousDifficulty}</p>
+                    <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">{t('caregiver.dashboard.previous')}</p>
+                    <p className="text-2xl font-bold text-gray-700">{t('caregiver.dashboard.diff')} {adaptiveData.previousDifficulty}</p>
                   </div>
                   <ArrowRight className="text-ai-blue w-6 h-6" />
                   <div className="text-center">
-                    <p className="text-xs text-gray-500 uppercase tracking-wider mb-1 text-ai-blue font-bold">Recommended</p>
-                    <p className="text-2xl font-bold text-ai-blue">Diff {adaptiveData.recommendedDifficulty}</p>
+                    <p className="text-xs text-gray-500 uppercase tracking-wider mb-1 text-ai-blue font-bold">{t('caregiver.dashboard.recommended')}</p>
+                    <p className="text-2xl font-bold text-ai-blue">{t('caregiver.dashboard.diff')} {adaptiveData.recommendedDifficulty}</p>
                   </div>
                 </div>
                 <div className="bg-white p-4 rounded-2xl border border-[#d6e8f4]">
                   <p className="text-sm text-gray-700">
-                    <span className="font-semibold">Reason:</span> Activity accuracy was {adaptiveData.recentAccuracy}%. The difficulty has been automatically adjusted to maintain the optimal cognitive challenge.
+                    <span className="font-semibold">{t('caregiver.dashboard.adaptiveReason').replace('was', 'was ' + adaptiveData.recentAccuracy + '%')}</span> {t('caregiver.dashboard.adaptiveMaintained')}
                   </p>
                 </div>
               </div>
@@ -133,7 +135,7 @@ export const CaregiverDashboard: React.FC = () => {
             </div>
           ) : (
              <div className="flex-1 flex items-center justify-center text-center p-4">
-                <p className="text-sm text-gray-500">Adaptive recommendation will appear after enough activity data is available.</p>
+                <p className="text-sm text-gray-500">{t('caregiver.dashboard.adaptiveWait')}</p>
              </div>
           )}
         </div>
@@ -143,30 +145,30 @@ export const CaregiverDashboard: React.FC = () => {
       <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8">
         <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
           <Activity className="w-6 h-6 mr-2 text-primary-teal" />
-          Activity Pattern Insights
+          {t('caregiver.dashboard.patternInsights')}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {insights.map(insight => {
             let bgColor = 'bg-gray-50';
             let borderColor = 'border-gray-200';
             let textColor = 'text-gray-600';
-            let statusText = 'Not enough data';
+            let statusText = t('caregiver.dashboard.statusNotEnough');
 
             if (insight.status === 'stable') {
               bgColor = 'bg-secondary-sage/10';
               borderColor = 'border-secondary-sage/30';
               textColor = 'text-secondary-sage';
-              statusText = 'Stable';
+              statusText = t('caregiver.dashboard.statusStable');
             } else if (insight.status === 'watch') {
               bgColor = 'bg-amber-50';
               borderColor = 'border-attention-amber/30';
               textColor = 'text-attention-amber';
-              statusText = 'Watch';
+              statusText = t('caregiver.dashboard.statusWatch');
             } else if (insight.status === 'notable_change') {
               bgColor = 'bg-red-50';
               borderColor = 'border-red-200';
               textColor = 'text-red-600';
-              statusText = 'Recent change detected';
+              statusText = t('caregiver.dashboard.statusChange');
             }
 
             return (
@@ -177,7 +179,7 @@ export const CaregiverDashboard: React.FC = () => {
                   <p className="text-sm text-gray-700">{insight.explanation}</p>
                 )}
                 {insight.status === 'insufficient_data' && (
-                  <p className="text-sm text-gray-500">More activity data is needed to identify a reliable pattern.</p>
+                  <p className="text-sm text-gray-500">{t('caregiver.dashboard.moreDataNeeded')}</p>
                 )}
               </div>
             );
@@ -188,8 +190,8 @@ export const CaregiverDashboard: React.FC = () => {
           <div className="mt-8 bg-amber-50 border border-attention-amber/30 p-4 rounded-xl flex items-start">
             <AlertTriangle className="w-6 h-6 text-attention-amber mr-3 flex-shrink-0 mt-0.5" />
             <p className="text-sm text-gray-800">
-              <span className="font-semibold text-attention-amber block mb-1">Activity attention</span>
-              Activity pattern changes can happen for many reasons. This information is not a medical diagnosis. If you have concerns about the patient's health or memory, consult a qualified healthcare professional.
+              <span className="font-semibold text-attention-amber block mb-1">{t('caregiver.dashboard.activityAttention')}</span>
+              {t('caregiver.dashboard.attentionDisclaimer')}
             </p>
           </div>
         )}
@@ -199,13 +201,13 @@ export const CaregiverDashboard: React.FC = () => {
         {/* SECTION 3 — RECENT ACTIVITY */}
         <div className="lg:col-span-2 bg-white rounded-3xl border border-gray-100 shadow-sm p-8">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold text-gray-900">Recent Activity</h2>
-            <button className="text-sm text-primary-teal font-medium hover:underline">View All</button>
+            <h2 className="text-xl font-bold text-gray-900">{t('caregiver.dashboard.recentActivity')}</h2>
+            <button className="text-sm text-primary-teal font-medium hover:underline">{t('caregiver.dashboard.viewAll')}</button>
           </div>
           
           {recentActivities.length === 0 ? (
             <div className="h-32 flex items-center justify-center text-gray-500 bg-gray-50 rounded-xl border border-dashed border-gray-200">
-              Activities will appear here after the patient completes an activity.
+              {t('caregiver.dashboard.noRecentActivity')}
             </div>
           ) : (
             <div className="space-y-4">
@@ -237,52 +239,52 @@ export const CaregiverDashboard: React.FC = () => {
           {/* AI Memory Assistant Status */}
           <Link to="/caregiver/family" className="block bg-white rounded-3xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition group">
             <div className="flex justify-between items-start mb-4">
-              <h3 className="font-bold text-gray-900">AI Memory Assistant</h3>
+              <h3 className="font-bold text-gray-900">{t('caregiver.dashboard.aiMemoryAssistant')}</h3>
               <ChevronRight className="text-gray-400 group-hover:text-primary-teal" />
             </div>
             {memoryStatus.savedMemories > 0 ? (
               <div>
                 <p className="text-3xl font-bold text-primary-teal mb-1">{memoryStatus.savedMemories}</p>
-                <p className="text-sm text-gray-500 mb-4">Saved Personal Memories</p>
-                <p className="text-xs text-secondary-sage font-medium bg-secondary-sage/10 inline-block px-2 py-1 rounded">Personal memory support is active.</p>
+                <p className="text-sm text-gray-500 mb-4">{t('caregiver.dashboard.savedMemories')}</p>
+                <p className="text-xs text-secondary-sage font-medium bg-secondary-sage/10 inline-block px-2 py-1 rounded">{t('caregiver.dashboard.memoryActive')}</p>
               </div>
             ) : (
-              <p className="text-sm text-gray-500">No personal memories added yet.</p>
+              <p className="text-sm text-gray-500">{t('caregiver.dashboard.noMemories')}</p>
             )}
           </Link>
 
           {/* Diet Preferences Status */}
           <Link to="/caregiver/diet" className="block bg-white rounded-3xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition group">
             <div className="flex justify-between items-start mb-4">
-              <h3 className="font-bold text-gray-900">Diet Preferences</h3>
+              <h3 className="font-bold text-gray-900">{t('caregiver.dashboard.dietPreferences')}</h3>
               <ChevronRight className="text-gray-400 group-hover:text-primary-teal" />
             </div>
             <div>
-              <p className="text-sm text-gray-500 mb-4">Manage dietary preferences and meal notes.</p>
+              <p className="text-sm text-gray-500 mb-4">{t('caregiver.dashboard.manageDiet')}</p>
             </div>
           </Link>
 
           {/* Language and Voice Status */}
           <div className="block bg-white rounded-3xl border border-gray-100 shadow-sm p-6 group">
             <div className="flex justify-between items-start mb-4">
-              <h3 className="font-bold text-gray-900">Language & Voice</h3>
+              <h3 className="font-bold text-gray-900">{t('caregiver.dashboard.languageVoice')}</h3>
             </div>
             <div>
               <p className="text-xl font-bold text-primary-teal mb-1 capitalize">
                 {LanguageService.getLanguageConfig(LanguageService.getCurrentLanguageCode())?.name || 'English'}
               </p>
-              <p className="text-sm text-gray-500 mb-4">Preferred Language</p>
+              <p className="text-sm text-gray-500 mb-4">{t('caregiver.dashboard.preferredLanguage')}</p>
               
               <div className="pt-3 border-t border-gray-100">
-                <p className="text-sm text-gray-700 font-medium mb-1">Voice Assistance</p>
+                <p className="text-sm text-gray-700 font-medium mb-1">{t('caregiver.dashboard.voiceAssistance')}</p>
                 {LanguageService.isVoiceModeEnabled() ? (
                   SpeechRecognitionService.isSupported() ? (
-                    <p className="text-xs text-secondary-sage font-medium bg-secondary-sage/10 inline-block px-2 py-1 rounded">Enabled & Supported</p>
+                    <p className="text-xs text-secondary-sage font-medium bg-secondary-sage/10 inline-block px-2 py-1 rounded">{t('caregiver.dashboard.enabledSupported')}</p>
                   ) : (
-                    <p className="text-xs text-attention-amber font-medium bg-amber-50 inline-block px-2 py-1 rounded border border-attention-amber/20">Enabled (Browser Unsupported)</p>
+                    <p className="text-xs text-attention-amber font-medium bg-amber-50 inline-block px-2 py-1 rounded border border-attention-amber/20">{t('caregiver.dashboard.enabledUnsupported')}</p>
                   )
                 ) : (
-                  <p className="text-xs text-gray-500 bg-gray-100 inline-block px-2 py-1 rounded">Disabled</p>
+                  <p className="text-xs text-gray-500 bg-gray-100 inline-block px-2 py-1 rounded">{t('caregiver.dashboard.disabled')}</p>
                 )}
               </div>
             </div>
