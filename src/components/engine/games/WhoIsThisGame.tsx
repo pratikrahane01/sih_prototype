@@ -41,6 +41,7 @@ export const WhoIsThisGame: React.FC<Props> = ({ difficulty, onComplete }) => {
   const [gameState,     setGameState]     = useState<GameState>('LOADING');
   const [transcript,    setTranscript]    = useState('');
   const [answered,      setAnswered]      = useState<string | null>(null);
+  const [voiceError,    setVoiceError]    = useState<string | null>(null);
 
   const startTimeRef = useRef(Date.now());
   const scoreRef    = useRef(0);
@@ -64,7 +65,7 @@ export const WhoIsThisGame: React.FC<Props> = ({ difficulty, onComplete }) => {
     
     return () => {
        if (timeoutRef.current) clearTimeout(timeoutRef.current);
-       SpeechRecognitionService.stopListening();
+       SpeechRecognitionService.abort();
        SpeechSynthesisService.stop();
     };
   }, [difficulty]);
@@ -75,6 +76,7 @@ export const WhoIsThisGame: React.FC<Props> = ({ difficulty, onComplete }) => {
     setAnswered(null);
     setFeedback(null);
     setTranscript('');
+    setVoiceError(null);
     startTimeRef.current = Date.now();
     
     askQuestion(qs[index]);
@@ -89,6 +91,7 @@ export const WhoIsThisGame: React.FC<Props> = ({ difficulty, onComplete }) => {
   const startListening = (q: PersonQuestion) => {
     setGameState('LISTENING');
     setTranscript('');
+    setVoiceError(null);
     SpeechRecognitionService.startListening(
       (state: SpeechRecognitionState) => {
          if (state === 'ERROR' || state === 'UNSUPPORTED') {
@@ -101,6 +104,7 @@ export const WhoIsThisGame: React.FC<Props> = ({ difficulty, onComplete }) => {
       },
       (err: Error) => {
          console.error("Speech error", err);
+         setVoiceError(err.message);
          setGameState('WAITING_MANUAL_INPUT');
       }
     );
@@ -275,9 +279,11 @@ export const WhoIsThisGame: React.FC<Props> = ({ difficulty, onComplete }) => {
             </div>
           )}
           {gameState === 'WAITING_MANUAL_INPUT' && (
-            <div className="flex items-center gap-2 text-gray-500 bg-gray-100 px-4 py-2 rounded-full">
-              <MicOff className="w-5 h-5" />
-              <span className="font-medium text-sm">Voice input is not available on this device. You can still choose an answer.</span>
+            <div className="flex items-center gap-2 text-gray-500 bg-gray-100 px-4 py-2 rounded-full max-w-lg mx-auto text-left leading-tight">
+              <MicOff className="w-5 h-5 shrink-0" />
+              <span className="font-medium text-sm">
+                {voiceError || "Voice input is not available on this device."} You can still choose an answer.
+              </span>
             </div>
           )}
         </div>

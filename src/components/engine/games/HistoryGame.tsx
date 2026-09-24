@@ -57,7 +57,7 @@ export const HistoryGame: React.FC<Props> = ({ difficulty, onComplete }) => {
     }
     
     return () => {
-       SpeechRecognitionService.stopListening();
+       SpeechRecognitionService.abort();
        SpeechSynthesisService.stop();
     };
   }, [difficulty]);

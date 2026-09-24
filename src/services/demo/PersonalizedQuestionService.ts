@@ -293,11 +293,19 @@ export function generateMemoryMomentsQuestions(
   difficulty: number
 ): MomentQuestion[] {
   const allMemories = getEffectiveMemories(patientId);
-  // Need memories that are events / childhood / place AND have location OR year
-  const memories = allMemories.filter(m =>
+  let memories = allMemories.filter(m =>
     (m.type === 'EVENT' || m.type === 'CHILDHOOD' || m.type === 'PLACE' || m.type === 'FAMILY') &&
     (m.location || m.year)
   );
+
+  // Fallback to demo memories if caregiver hasn't added any location/year memories yet
+  if (memories.length === 0) {
+    memories = DEMO_MEMORIES.filter(m =>
+      m.patientId === DEMO_PATIENT_ID &&
+      (m.type === 'EVENT' || m.type === 'CHILDHOOD' || m.type === 'PLACE' || m.type === 'FAMILY') &&
+      (m.location || m.year)
+    );
+  }
 
   if (memories.length === 0) return [];
 
@@ -377,11 +385,18 @@ export function generateLifeStoryQuestions(
   difficulty: number
 ): LifeStoryQuestion[] {
   const allMemories = getEffectiveMemories(patientId);
-  // Only memories with a parseable year
-  const memories = allMemories
+  let memories = allMemories
     .filter(m => m.year && parseYear(m.year) > 0)
     .map(m => ({ ...m, parsedYear: parseYear(m.year!) }))
     .sort((a, b) => a.parsedYear - b.parsedYear);
+
+  // Fallback to demo memories if caregiver hasn't added enough year-based memories
+  if (memories.length < 2) {
+    memories = DEMO_MEMORIES
+      .filter(m => m.patientId === DEMO_PATIENT_ID && m.year && parseYear(m.year) > 0)
+      .map(m => ({ ...m, parsedYear: parseYear(m.year!) }))
+      .sort((a, b) => a.parsedYear - b.parsedYear);
+  }
 
   // Need at least 2 memories with years
   if (memories.length < 2) return [];
@@ -419,6 +434,11 @@ export function generateFavoriteSongQuestions(
 ): SongQuestion[] {
   const allMemories = getEffectiveMemories(patientId);
   let songs = allMemories.filter(m => m.type === 'SONG');
+
+  // Fallback to demo songs if caregiver hasn't added any songs
+  if (songs.length === 0) {
+    songs = DEMO_MEMORIES.filter(m => m.patientId === DEMO_PATIENT_ID && m.type === 'SONG');
+  }
 
   // Filter songs by current language if language metadata exists.
   // This is crucial because demo songs are loaded into localStorage, bypassing the empty check.

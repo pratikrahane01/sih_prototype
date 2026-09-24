@@ -122,6 +122,8 @@ class SpeechSynthesisServiceClass {
     return text.split('').map(c => map[c] || c).join('');
   }
 
+  private cancelToken = 0;
+
   /**
    * Speaks the provided text if voice mode is enabled and the browser supports it.
    */
@@ -132,6 +134,10 @@ class SpeechSynthesisServiceClass {
 
     // Cancel any ongoing speech
     window.speechSynthesis.cancel();
+    
+    // Increment token for this new utterance
+    this.cancelToken++;
+    const currentToken = this.cancelToken;
 
     // Ensure voices are loaded
     let voices = this.voiceCache;
@@ -149,8 +155,6 @@ class SpeechSynthesisServiceClass {
       const voice = this.resolveVoice(voices, targetLang);
       
       let finalSpeechText = text;
-      // If we are falling back to a Hindi voice for Assamese text, we must transliterate
-      // the Eastern Nagari script to Devnagari so the Hindi TTS engine can actually read it.
       if (voice && (voice.lang === 'hi-IN' || voice.lang.startsWith('hi')) && currentLangCode === 'as') {
         finalSpeechText = this.transliterateAssameseToDevnagari(finalSpeechText);
       }
@@ -159,26 +163,22 @@ class SpeechSynthesisServiceClass {
       
       if (voice) {
         utterance.voice = voice;
-        // CRITICAL: Update the utterance language to match the voice we actually chose
         utterance.lang = voice.lang;
       } else {
         utterance.lang = targetLang; // Fallback
       }
 
-      // Calm, elderly-friendly rate
       utterance.rate = 0.9;
       utterance.pitch = 1.0;
 
       let hasResolved = false;
 
-      utterance.onstart = () => {
-         // console.log(`[Diagnostics] SpeechSynthesis: Speech started.`);
-      };
+      utterance.onstart = () => {};
 
       utterance.onend = () => {
         if (!hasResolved) {
           hasResolved = true;
-          resolve();
+          if (this.cancelToken === currentToken) resolve();
         }
       };
 
@@ -186,28 +186,25 @@ class SpeechSynthesisServiceClass {
         console.error("[Diagnostics] SpeechSynthesis error:", e);
         if (!hasResolved) {
           hasResolved = true;
-          // IMPORTANT: Do not throw an error that breaks the application flow. 
-          // Resolve gracefully so the game/assistant can continue.
-          resolve(); 
+          if (this.cancelToken === currentToken) resolve();
         }
       };
 
-      // Store a global reference to prevent garbage collection killing the speech midway
       (window as any)._currentUtterance = utterance;
       window.speechSynthesis.speak(utterance);
       
-      // Safety timeout fallback just in case onend never fires
       setTimeout(() => {
         if (!hasResolved) {
           console.warn("[Diagnostics] SpeechSynthesis: onend timeout triggered.");
           hasResolved = true;
-          resolve();
+          if (this.cancelToken === currentToken) resolve();
         }
       }, Math.max(3000, text.length * 100 + 1000));
     });
   }
 
   public stop() {
+    this.cancelToken++;
     if (this.isSupportedBrowser) {
       window.speechSynthesis.cancel();
     }

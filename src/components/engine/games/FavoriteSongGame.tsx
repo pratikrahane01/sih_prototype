@@ -63,7 +63,7 @@ export const FavoriteSongGame: React.FC<Props> = ({ difficulty, onComplete }) =>
     
     return () => {
        if (timeoutRef.current) clearTimeout(timeoutRef.current);
-       SpeechRecognitionService.stopListening();
+       SpeechRecognitionService.abort();
        SpeechSynthesisService.stop();
     };
   }, [difficulty]);
@@ -76,6 +76,7 @@ export const FavoriteSongGame: React.FC<Props> = ({ difficulty, onComplete }) =>
   }, [currentIndex, gameState]);
 
   const startQuestion = (index: number, qs: SongQuestion[]) => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
     if (index >= qs.length) return;
     setCurrentIndex(index);
     setGameState('PLAYING_SONG');
@@ -122,6 +123,8 @@ export const FavoriteSongGame: React.FC<Props> = ({ difficulty, onComplete }) =>
   const evaluateAnswer = (spokenText: string, isFinal: boolean, q: SongQuestion) => {
     const lowerText = spokenText.toLowerCase();
     
+    if (isFinal && timeoutRef.current) clearTimeout(timeoutRef.current);
+
     if (lowerText.includes("don't know") || lowerText.includes("mahit nahi") || lowerText.includes("no idea")) {
        SpeechRecognitionService.stopListening();
        setGameState('EVALUATING');

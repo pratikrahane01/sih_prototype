@@ -44,13 +44,13 @@ export const PatientVoiceAssistant: React.FC = () => {
       handleStop();
     }
     return () => {
-      SpeechRecognitionService.stopListening();
+      SpeechRecognitionService.abort();
       SpeechSynthesisService.stop();
     };
   }, [isOpen]);
 
   const handleStop = () => {
-    SpeechRecognitionService.stopListening();
+    SpeechRecognitionService.abort();
     SpeechSynthesisService.stop();
     setVoiceState('IDLE');
     setCurrentTranscript('');

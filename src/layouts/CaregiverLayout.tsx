@@ -2,11 +2,19 @@ import React, { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { Users, Bell, BarChart2, ArrowLeft, WifiOff, Menu, X, Heart, Calendar } from 'lucide-react';
 import { useOfflineStatus } from '../hooks/useOfflineStatus';
+import type { SupportedLanguageCode } from '../types';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const CaregiverLayout: React.FC = () => {
   const location = useLocation();
   const { isOffline } = useOfflineStatus();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { language, setLanguage, t } = useLanguage();
+
+  const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newLang = e.target.value as SupportedLanguageCode;
+    setLanguage(newLang);
+  };
 
   const sidebarLinks = [
     { path: '/caregiver', label: 'Dashboard', icon: BarChart2, exact: true },
@@ -53,6 +61,16 @@ const CaregiverLayout: React.FC = () => {
           })}
         </nav>
         <div className="p-4 border-t border-gray-200 space-y-2">
+          <select 
+            value={language} 
+            onChange={handleLanguageChange}
+            className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-700 outline-none focus:ring-2 focus:ring-primary-teal focus:border-transparent mb-2"
+          >
+            <option value="as">অসমীয়া (AS)</option>
+            <option value="mr">मराठी (MR)</option>
+            <option value="hi">हिन्दी (HI)</option>
+            <option value="en">English (EN)</option>
+          </select>
           {isOffline && (
             <div className="flex items-center gap-2 text-gray-500 text-sm px-4 py-2 bg-gray-50 rounded-lg">
               <WifiOff className="w-4 h-4" />
@@ -86,6 +104,18 @@ const CaregiverLayout: React.FC = () => {
         {/* Mobile Menu */}
         {mobileMenuOpen && (
           <div className="md:hidden bg-white border-b border-gray-200 p-4 space-y-1">
+            <div className="px-4 py-2 mb-2">
+              <select 
+                value={language} 
+                onChange={handleLanguageChange}
+                className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-700 outline-none focus:ring-2 focus:ring-primary-teal focus:border-transparent"
+              >
+                <option value="as">অসমীয়া (AS)</option>
+                <option value="mr">मराठी (MR)</option>
+                <option value="hi">हिन्दी (HI)</option>
+                <option value="en">English (EN)</option>
+              </select>
+            </div>
             {sidebarLinks.map((link) => {
               const Icon = link.icon;
               const active = isActive(link);

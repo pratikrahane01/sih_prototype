@@ -49,107 +49,92 @@ const PatientLayout: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background-warm text-text-charcoal flex flex-col font-sans">
-      {/* Top Navigation Bar */}
-      <header className="bg-primary-teal text-white shadow-md sticky top-0 z-50 h-[85px] flex items-center rounded-b-[24px]">
-        <div className="w-full max-w-7xl mx-auto px-4 md:px-8 flex justify-between items-center">
-          {/* LEFT */}
-          <div className="flex items-center space-x-3">
-            <div className="bg-white/10 p-2 rounded-xl">
-              <Brain className="w-8 h-8 text-white" />
+      {/* Unified Top Navbar */}
+      <header className="bg-background-warm sticky top-0 z-50 py-4 px-4 md:px-8 border-b border-gray-200/50">
+        <div className="max-w-[1400px] mx-auto flex items-center justify-between gap-6 overflow-x-auto pb-2 md:pb-0 hide-scrollbar">
+          {/* LEFT: Logo & Name */}
+          <div className="flex items-center gap-3 shrink-0">
+            <div className="bg-[#E2F1ED] p-2.5 rounded-2xl">
+              <Brain className="w-7 h-7 text-primary-teal" />
             </div>
             <div className="flex flex-col">
-              <h1 className="text-xl font-bold tracking-wide leading-tight">Smaran Sarathii</h1>
+              <h1 className="text-[17px] font-bold text-primary-teal leading-tight">Smaran Sarathii</h1>
               {profile?.nickname || profile?.name ? (
-                <p className="text-sm text-white/80 font-medium">{profile.nickname || profile.name}</p>
+                <p className="text-[13px] text-text-charcoal/60 font-medium">{profile.nickname || profile.name}</p>
               ) : null}
             </div>
           </div>
 
-          {/* RIGHT */}
-          <div className="flex items-center gap-2 md:gap-4">
+          {/* CENTER: Navigation Links */}
+          <nav className="flex items-center bg-white border border-gray-100 rounded-full p-1.5 shadow-sm shrink-0">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const isActive =
+                location.pathname === item.path ||
+                (item.path !== '/patient' && location.pathname.startsWith(item.path));
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all ${
+                    isActive
+                      ? 'bg-primary-teal text-white shadow-md'
+                      : 'text-text-charcoal/60 hover:text-text-charcoal hover:bg-gray-50'
+                  }`}
+                >
+                  <Icon className={`w-4 h-4 ${isActive ? 'text-white' : ''}`} />
+                  {item.label}
+                </Link>
+              );
+            })}
+          </nav>
+
+          {/* RIGHT: Actions */}
+          <div className="flex items-center gap-3 shrink-0">
             <select 
               value={language} 
               onChange={handleLanguageChange}
-              className="bg-white/20 text-white border border-white/30 rounded-lg px-2 py-1 text-sm outline-none cursor-pointer hidden sm:block"
+              className="bg-white border border-gray-100 text-text-charcoal rounded-full px-4 py-2.5 text-sm font-medium outline-none cursor-pointer hover:bg-gray-50 transition-colors shadow-sm appearance-none pr-9 relative"
+              style={{ backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.75rem center', backgroundSize: '1em' }}
             >
-              <option value="as" className="text-black">অসমীয়া (AS)</option>
-              <option value="mr" className="text-black">मराठी (MR)</option>
-              <option value="hi" className="text-black">हिन्दी (HI)</option>
-              <option value="en" className="text-black">English (EN)</option>
+              <option value="en">English</option>
+              <option value="as">অসমীয়া</option>
+              <option value="mr">मराठी</option>
+              <option value="hi">हिन्दी</option>
             </select>
 
             {isOffline && (
-              <div className="flex items-center gap-1 bg-white/20 text-white px-3 py-1.5 rounded-full text-sm font-medium">
+              <div className="flex items-center gap-1 bg-red-50 text-red-600 px-3 py-2 rounded-full text-sm font-medium border border-red-100 shadow-sm">
                 <WifiOff className="w-4 h-4" />
                 <span className="hidden sm:inline">{t('common.offline')}</span>
               </div>
             )}
             
-            <button className="p-3 text-white/90 hover:text-white hover:bg-white/10 rounded-full transition-colors" aria-label="Notifications">
-              <Bell className="w-6 h-6" />
+            <button className="p-2.5 text-text-charcoal/60 hover:text-text-charcoal hover:bg-gray-50 rounded-full transition-colors border border-gray-100 shadow-sm bg-white flex items-center justify-center" aria-label="Notifications">
+              <Bell className="w-5 h-5" />
             </button>
             
             <Link 
               to="/" 
-              className="flex items-center space-x-2 text-white/90 hover:text-white hover:bg-white/10 p-3 rounded-full md:rounded-xl transition-colors"
+              className="flex items-center gap-2 bg-white border border-gray-100 text-text-charcoal hover:bg-gray-50 px-5 py-2.5 rounded-full transition-colors shadow-sm"
               aria-label={t('common.exit')}
             >
-              <LogOut className="w-6 h-6" />
-              <span className="text-lg font-medium hidden md:inline">{t('common.exit')}</span>
+              <LogOut className="w-4 h-4" />
+              <span className="text-sm font-medium hidden md:inline">{t('common.exit')}</span>
             </Link>
           </div>
         </div>
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-grow w-full pb-32">
+      <main className="flex-grow w-full max-w-[1400px] mx-auto pb-12 pt-4 px-4 md:px-8">
         <Outlet />
       </main>
 
       {/* Non-Diagnostic Disclaimer */}
-      <div className="bg-background-warm pb-6 text-center px-4 text-xs text-text-charcoal/40 mb-20 max-w-3xl mx-auto">
+      <div className="bg-background-warm pb-6 text-center px-4 text-xs text-text-charcoal/40 mb-8 max-w-3xl mx-auto">
         <p>This platform supports cognitive activities and personal memory recall. It is not a medical or diagnostic tool. If you have concerns about memory or thinking, please consult a healthcare professional.</p>
       </div>
-
-      {/* Bottom Navigation */}
-      <nav
-        className="fixed bottom-0 left-0 right-0 bg-white rounded-t-[32px] shadow-[0_-10px_40px_rgba(0,0,0,0.08)] z-50 pb-safe border-t border-gray-100"
-        aria-label="Main navigation"
-      >
-        <div className="max-w-7xl mx-auto flex justify-around px-2 py-4 md:py-5">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive =
-              location.pathname === item.path ||
-              (item.path !== '/patient' && location.pathname.startsWith(item.path));
-            return (
-              <Link
-                key={item.path}
-                to={item.path}
-                aria-label={item.label}
-                aria-current={isActive ? 'page' : undefined}
-                className="flex flex-col items-center justify-center min-w-[70px] md:min-w-[100px] group"
-              >
-                <div className={`p-3 rounded-2xl transition-all duration-300 ${
-                  isActive 
-                    ? 'bg-primary-teal/10 text-primary-teal scale-110' 
-                    : 'text-text-charcoal/50 group-hover:bg-gray-50 group-hover:text-text-charcoal'
-                }`}>
-                  <Icon className={`w-7 h-7 md:w-8 md:h-8 ${isActive ? 'text-primary-teal stroke-[2.5]' : 'stroke-[1.5]'}`} />
-                </div>
-                <span className={`text-[11px] md:text-sm mt-1 transition-colors ${
-                  isActive ? 'font-bold text-primary-teal' : 'font-medium text-text-charcoal/60 group-hover:text-text-charcoal'
-                }`}>
-                  {item.label}
-                </span>
-                {isActive && (
-                  <div className="w-6 h-1 bg-primary-teal rounded-full mt-1.5" />
-                )}
-              </Link>
-            );
-          })}
-        </div>
-      </nav>
 
       {/* Voice Assistant */}
       <PatientVoiceAssistant />

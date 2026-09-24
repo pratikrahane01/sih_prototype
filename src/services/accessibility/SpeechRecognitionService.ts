@@ -39,6 +39,10 @@ class SpeechRecognitionServiceClass {
     }
   }
 
+  private onStateChangeCb?: (state: SpeechRecognitionState) => void;
+  private onResultCb?: (transcript: string, isFinal: boolean) => void;
+  private onErrorCb?: (err: Error) => void;
+
   /**
    * Starts listening for speech in real-time.
    */
@@ -50,25 +54,26 @@ class SpeechRecognitionServiceClass {
       this.intentionalStop = false;
       this.fullFinalTranscript = '';
       this.lastInterimTranscript = '';
+      this.onStateChangeCb = onStateChange;
+      this.onResultCb = onResult;
+      this.onErrorCb = onError;
 
       if (!this.isSupportedBrowser || !this.SpeechRecognitionConstructor) {
         console.warn("[Diagnostics] SpeechRecognition: Cannot start listening. Unsupported.");
-        onStateChange('UNSUPPORTED');
-        onError(new Error("Voice input is not supported on this device."));
+        if (this.onStateChangeCb) this.onStateChangeCb('UNSUPPORTED');
+        if (this.onErrorCb) this.onErrorCb(new Error("Browser does not support voice input. Please use Chrome or Edge."));
         return;
       }
 
-      // Always recreate the recognition instance to guarantee language switches take effect
       if (this.recognition) {
         try {
           this.recognition.stop();
         } catch (e) {}
       }
       this.recognition = new this.SpeechRecognitionConstructor();
-      this.recognition.continuous = false; // Auto-stop on silence to trigger onend
+      this.recognition.continuous = false;
       this.recognition.interimResults = true;
 
-      // Configure language based on the user's current profile
       const currentLangCode = LanguageService.getCurrentLanguageCode();
       const resolvedLocale = this.resolveSpeechLocale(currentLangCode);
       
@@ -76,11 +81,11 @@ class SpeechRecognitionServiceClass {
       this.recognition.lang = resolvedLocale;
 
       this.recognition.onstart = () => {
-        onStateChange('LISTENING');
+        if (this.onStateChangeCb) this.onStateChangeCb('LISTENING');
       };
 
       this.recognition.onresult = (event: any) => {
-        onStateChange('PROCESSING');
+        if (this.onStateChangeCb) this.onStateChangeCb('PROCESSING');
         let currentFinal = '';
         let currentInterim = '';
 
@@ -97,22 +102,37 @@ class SpeechRecognitionServiceClass {
         const displayTranscript = currentFinal + currentInterim;
         this.lastInterimTranscript = displayTranscript;
 
-        if (displayTranscript.trim().length > 0) {
-          // Fire interim result so the UI updates
-          onResult(displayTranscript, false);
+        if (displayTranscript.trim().length > 0 && this.onResultCb) {
+          this.onResultCb(displayTranscript, false);
         }
       };
 
       this.recognition.onerror = (event: any) => {
         if (event.error === 'not-allowed') {
           this.intentionalStop = true;
-          onStateChange('ERROR');
-          onError(new Error("Microphone access is needed for voice input."));
+          if (this.onStateChangeCb) this.onStateChangeCb('ERROR');
+          if (this.onErrorCb) this.onErrorCb(new Error("Microphone access is blocked. Please allow microphone access in your browser settings."));
+        } else if (event.error === 'language-not-supported' || event.error === 'network') {
+          console.warn(`[Diagnostics] SpeechRecognition Error: ${event.error} for ${this.recognition.lang}. Falling back to en-US.`);
+          if (this.recognition.lang !== 'en-US') {
+            this.recognition.lang = 'en-US';
+            try {
+              this.recognition.start();
+            } catch (e) {
+              this.intentionalStop = true;
+              if (this.onStateChangeCb) this.onStateChangeCb('ERROR');
+              if (this.onErrorCb) this.onErrorCb(new Error(event.error === 'network' ? "Network error: Voice input requires an internet connection." : "Voice input language is not supported on this device."));
+            }
+          } else {
+            this.intentionalStop = true;
+            if (this.onStateChangeCb) this.onStateChangeCb('ERROR');
+            if (this.onErrorCb) this.onErrorCb(new Error(event.error === 'network' ? "Network error: Voice input requires an internet connection." : "Voice input language is not supported on this device."));
+          }
         } else if (event.error !== 'no-speech' && event.error !== 'audio-capture' && event.error !== 'aborted') {
           console.error(`[Diagnostics] SpeechRecognition Error: ${event.error}. Locale: ${resolvedLocale}`);
           this.intentionalStop = true;
-          onStateChange('ERROR');
-          onError(new Error(`Speech recognition error: ${event.error}`));
+          if (this.onStateChangeCb) this.onStateChangeCb('ERROR');
+          if (this.onErrorCb) this.onErrorCb(new Error(`Speech recognition error: ${event.error}`));
         }
       };
 
@@ -122,35 +142,39 @@ class SpeechRecognitionServiceClass {
           finalTrimmed = this.lastInterimTranscript.trim();
         }
         
-        if (finalTrimmed.length > 0) {
+        if (finalTrimmed.length > 0 && this.onResultCb) {
           console.log(`[Diagnostics] SpeechRecognition: Session ended. Final accumulated transcript: "${finalTrimmed}"`);
-          // Send the complete transcript to the evaluator
-          onResult(finalTrimmed, true);
+          this.onResultCb(finalTrimmed, true);
         }
 
-        // Only restart if we haven't intentionally stopped AND we didn't just capture a final sentence.
-        // Wait, if we captured a final sentence, `onResult(..., true)` will synchronously trigger `stopListening`
-        // which sets `intentionalStop = true`. So this logic holds perfectly.
         if (!this.intentionalStop) {
           try {
             this.recognition.start();
-          } catch (e) {
-            // Ignore if already started
-          }
+          } catch (e) {}
         }
       };
 
       try {
         this.recognition.start();
-      } catch (err: any) {
-        // Ignore if already started
-      }
+      } catch (err: any) {}
   }
 
   public stopListening() {
     this.intentionalStop = true;
     if (this.recognition) {
       this.recognition.stop();
+    }
+  }
+
+  public abort() {
+    this.intentionalStop = true;
+    this.onStateChangeCb = undefined;
+    this.onResultCb = undefined;
+    this.onErrorCb = undefined;
+    if (this.recognition) {
+      try {
+        this.recognition.stop();
+      } catch (e) {}
     }
   }
 }
