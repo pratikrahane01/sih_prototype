@@ -9,7 +9,7 @@ const CaregiverLayout: React.FC = () => {
   const location = useLocation();
   const { isOffline } = useOfflineStatus();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { language, setLanguage } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
 
   const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newLang = e.target.value as SupportedLanguageCode;
@@ -17,13 +17,13 @@ const CaregiverLayout: React.FC = () => {
   };
 
   const sidebarLinks = [
-    { path: '/caregiver', label: 'Dashboard', icon: BarChart2, exact: true },
-    { path: '/caregiver/family', label: 'Family Contacts', icon: Users },
-    { path: '/caregiver/memories', label: 'Personal Memories', icon: Heart },
-    { path: '/caregiver/routine', label: 'Daily Routine', icon: Calendar },
-    { path: '/caregiver/diet', label: 'Diet Preferences', icon: Heart },
-    { path: '/caregiver/patients', label: 'Patients', icon: Users },
-    { path: '/caregiver/reminders', label: 'Reminders', icon: Bell },
+    { path: '/caregiver', label: t('caregiver.sidebar.dashboard', 'Dashboard'), icon: BarChart2, exact: true },
+    { path: '/caregiver/family', label: t('caregiver.sidebar.familyContacts', 'Family Contacts'), icon: Users },
+    { path: '/caregiver/memories', label: t('caregiver.sidebar.personalMemories', 'Personal Memories'), icon: Heart },
+    { path: '/caregiver/routine', label: t('caregiver.sidebar.dailyRoutine', 'Daily Routine'), icon: Calendar },
+    { path: '/caregiver/diet', label: t('caregiver.sidebar.dietPreferences', 'Diet Preferences'), icon: Heart },
+    { path: '/caregiver/patients', label: t('caregiver.sidebar.patients', 'Patients'), icon: Users },
+    { path: '/caregiver/reminders', label: t('caregiver.sidebar.reminders', 'Reminders'), icon: Bell },
   ];
 
   const isActive = (link: typeof sidebarLinks[number]) => {
@@ -36,7 +36,7 @@ const CaregiverLayout: React.FC = () => {
       {/* Desktop Sidebar Navigation */}
       <aside className="w-64 bg-white border-r border-gray-200 hidden md:flex flex-col flex-shrink-0">
         <div className="p-6 border-b border-gray-200">
-          <h2 className="text-xl font-bold text-primary-teal">Caregiver Portal</h2>
+          <h2 className="text-xl font-bold text-primary-teal">{t('caregiver.portal', 'Caregiver Portal')}</h2>
           <p className="text-sm text-gray-500 mt-1">Smaran Sarathii</p>
         </div>
         <nav className="flex-grow p-4 space-y-1" aria-label="Caregiver navigation">
@@ -74,12 +74,12 @@ const CaregiverLayout: React.FC = () => {
           {isOffline && (
             <div className="flex items-center gap-2 text-gray-500 text-sm px-4 py-2 bg-gray-50 rounded-lg">
               <WifiOff className="w-4 h-4" />
-              <span>Working offline</span>
+              <span>{t('caregiver.sidebar.workingOffline', 'Working offline')}</span>
             </div>
           )}
           <Link to="/" className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 px-4 py-2 rounded-lg hover:bg-gray-100 transition">
             <ArrowLeft className="w-5 h-5" />
-            <span>Exit Portal</span>
+            <span>{t('caregiver.sidebar.exitPortal', 'Exit Portal')}</span>
           </Link>
         </div>
       </aside>
@@ -88,7 +88,7 @@ const CaregiverLayout: React.FC = () => {
       <div className="flex-1 flex flex-col min-w-0">
         {/* Mobile Header */}
         <header className="bg-white border-b border-gray-200 p-4 md:hidden flex justify-between items-center">
-          <h2 className="text-lg font-bold text-primary-teal">Caregiver Portal</h2>
+          <h2 className="text-lg font-bold text-primary-teal">{t('caregiver.portal', 'Caregiver Portal')}</h2>
           <div className="flex items-center gap-3">
             {isOffline && <WifiOff className="w-5 h-5 text-gray-500" aria-label="Working offline" />}
             <button

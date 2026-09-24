@@ -1,5 +1,40 @@
 export const translations: Record<string, Record<string, string>> = {
   en: {
+    // Caregiver Family Manager
+    "caregiver.family.title": "Patient Memories",
+    "caregiver.family.addMemory": "Add New Memory",
+    "caregiver.family.category": "Category",
+    "caregiver.family.catPerson": "Important Person",
+    "caregiver.family.catObject": "Important Object",
+    "caregiver.family.catPlace": "Important Place",
+    "caregiver.family.catRoutine": "Daily Routine",
+    "caregiver.family.catActivity": "Activity",
+    "caregiver.family.name": "Name",
+    "caregiver.family.objectName": "Object Name",
+    "caregiver.family.placeName": "Place Name",
+    "caregiver.family.titleField": "Title",
+    "caregiver.family.desc": "Description / Detail",
+    "caregiver.family.save": "Save Memory",
+    "caregiver.family.savedMemories": "Saved Memories",
+    "caregiver.family.noMemories": "No memories saved yet.",
+    "caregiver.family.category_person": "Important Person",
+    "caregiver.family.category_object": "Important Object",
+    "caregiver.family.category_place": "Important Place",
+    "caregiver.family.category_routine": "Daily Routine",
+    "caregiver.family.category_activity": "Activity",
+    
+    // Caregiver Layout Sidebar
+    "caregiver.portal": "Caregiver Portal",
+    "caregiver.sidebar.dashboard": "Dashboard",
+    "caregiver.sidebar.familyContacts": "Family Contacts",
+    "caregiver.sidebar.personalMemories": "Personal Memories",
+    "caregiver.sidebar.dailyRoutine": "Daily Routine",
+    "caregiver.sidebar.dietPreferences": "Diet Preferences",
+    "caregiver.sidebar.patients": "Patients",
+    "caregiver.sidebar.reminders": "Reminders",
+    "caregiver.sidebar.workingOffline": "Working offline",
+    "caregiver.sidebar.exitPortal": "Exit Portal",
+
     // Caregiver Dashboard
     "caregiver.dashboard.title": "Good morning, Caregiver",
     "caregiver.dashboard.subtitle": "Here's how today's activities are going for",
@@ -278,6 +313,14 @@ export const translations: Record<string, Record<string, string>> = {
     },
   
   hi: {
+    "caregiver.portal": "देखभालकर्ता पोर्टल",
+    "caregiver.sidebar.dashboard": "डैशबोर्ड",
+    "caregiver.sidebar.familyContacts": "पारिवारिक संपर्क",
+    "caregiver.sidebar.personalMemories": "व्यक्तिगत यादें",
+    "caregiver.family.title": "रोगी की यादें",
+    "caregiver.family.addMemory": "नई याद जोड़ें",
+    "caregiver.family.save": "याद सहेजें",
+
     "caregiver.dashboard.title": "सुप्रभात, देखभालकर्ता",
     "caregiver.dashboard.subtitle": "आज की गतिविधियां कैसी चल रही हैं",
     "caregiver.dashboard.activitiesCompleted": "पूरी की गई गतिविधियां",

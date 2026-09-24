@@ -320,6 +320,7 @@ export const FamilyManager: React.FC = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const patientId = PatientService.getProfile()?.id || 'demo-patient';
+  const { t } = useLanguage();
 
   useEffect(() => {
     setMemories(MemoryService.getPatientMemories(patientId));
@@ -348,29 +349,29 @@ export const FamilyManager: React.FC = () => {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Patient Memories</h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">{t('caregiver.family.title', 'Patient Memories')}</h1>
       
       <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm mb-8">
-        <h2 className="text-xl font-semibold mb-4 text-primary-teal">Add New Memory</h2>
+        <h2 className="text-xl font-semibold mb-4 text-primary-teal">{t('caregiver.family.addMemory', 'Add New Memory')}</h2>
         <form onSubmit={handleAddMemory} className="space-y-4 max-w-lg">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('caregiver.family.category', 'Category')}</label>
             <select 
               value={category} 
               onChange={e => setCategory(e.target.value as MemoryCategory)}
               className="w-full p-2 border border-gray-300 rounded-lg focus:ring-primary-teal focus:border-primary-teal"
             >
-              <option value="person">Important Person</option>
-              <option value="object">Important Object</option>
-              <option value="place">Important Place</option>
-              <option value="routine">Daily Routine</option>
-              <option value="activity">Activity</option>
+              <option value="person">{t('caregiver.family.catPerson', 'Important Person')}</option>
+              <option value="object">{t('caregiver.family.catObject', 'Important Object')}</option>
+              <option value="place">{t('caregiver.family.catPlace', 'Important Place')}</option>
+              <option value="routine">{t('caregiver.family.catRoutine', 'Daily Routine')}</option>
+              <option value="activity">{t('caregiver.family.catActivity', 'Activity')}</option>
             </select>
           </div>
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              {category === 'person' ? 'Name' : category === 'object' ? 'Object Name' : category === 'place' ? 'Place Name' : 'Title'}
+              {category === 'person' ? t('caregiver.family.name', 'Name') : category === 'object' ? t('caregiver.family.objectName', 'Object Name') : category === 'place' ? t('caregiver.family.placeName', 'Place Name') : t('caregiver.family.titleField', 'Title')}
             </label>
             <input 
               type="text" 
@@ -384,7 +385,7 @@ export const FamilyManager: React.FC = () => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Description / Detail
+              {t('caregiver.family.desc', 'Description / Detail')}
             </label>
             <textarea 
               value={content}
@@ -398,31 +399,31 @@ export const FamilyManager: React.FC = () => {
 
           <button 
             type="submit" 
-            className="bg-primary-teal text-white px-6 py-2 rounded-lg font-medium hover:bg-teal-700 transition"
+            className="bg-primary-teal text-white px-4 py-2 rounded-lg hover:bg-teal-700 transition"
           >
-            Save Memory
+            {t('caregiver.family.save', 'Save Memory')}
           </button>
         </form>
       </div>
 
       <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-        <h2 className="text-xl font-semibold mb-4 text-gray-900">Saved Memories</h2>
+        <h2 className="text-xl font-semibold mb-4 text-primary-teal">{t('caregiver.family.savedMemories', 'Saved Memories')}</h2>
         {memories.length === 0 ? (
-          <p className="text-gray-500">No memories saved yet.</p>
+          <p className="text-gray-500">{t('caregiver.family.noMemories', 'No memories saved yet.')}</p>
         ) : (
           <div className="space-y-4">
             {memories.map(memory => (
-              <div key={memory.id} className="p-4 bg-gray-50 rounded-lg border border-gray-100 flex justify-between items-start">
+              <div key={memory.id} className="border border-gray-200 p-4 rounded-lg flex justify-between items-start hover:shadow-sm transition">
                 <div>
-                  <span className="text-xs font-bold text-primary-teal uppercase tracking-wider mb-1 block">
-                    {memory.category}
+                  <span className="inline-block px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full mb-2 capitalize">
+                    {t('caregiver.family.category_' + memory.category, memory.category)}
                   </span>
-                  <h3 className="font-semibold text-gray-900">{memory.title}</h3>
+                  <h3 className="font-bold text-gray-900">{memory.title}</h3>
                   <p className="text-gray-600 mt-1">{memory.content}</p>
                 </div>
                 <button 
                   onClick={() => handleDelete(memory.id)}
-                  className="text-red-500 text-sm hover:underline"
+                  className="text-red-500 hover:text-red-700 p-2"
                 >
                   Delete
                 </button>
